@@ -1,0 +1,47 @@
+{
+  "components": [
+    {
+      "attributes": [
+        {
+          "name": "Expanded",
+          "value": "true"
+        }
+      ],
+      "components": [
+        {
+          "class": "justify-content-center",
+          "components": [
+            {
+              "class": "justify-content-center col-xl-5 col-md-7",
+              "components": [
+                {
+                  "components": [
+                    {
+                      "name": "main",
+                      "type": "content-container"
+                    }
+                  ],
+                  "name": "card0",
+                  "style": {
+                    "marginTop": "8rem"
+                  },
+                  "type": "card"
+                }
+              ],
+              "name": "col0",
+              "type": "col"
+            }
+          ],
+          "name": "row0",
+          "type": "row"
+        }
+      ],
+      "name": "body0",
+      "style": {
+        "marginLeft": "0px"
+      },
+      "type": "body"
+    }
+  ],
+  "name": "Login"
+}

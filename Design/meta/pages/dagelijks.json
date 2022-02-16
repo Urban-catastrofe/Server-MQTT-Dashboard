@@ -1,0 +1,335 @@
+{
+  "components": [
+    {
+      "components": [
+        {
+          "name": "pageTitle",
+          "size": "H1",
+          "text": "Dagelijks",
+          "type": "heading"
+        },
+        {
+          "attributes": [],
+          "name": "heading1",
+          "size": "H3",
+          "style": {
+            "borderRadius": "-1px",
+            "float": "none",
+            "marginBottom": "0px",
+            "marginLeft": "100px",
+            "marginRight": "0px",
+            "marginTop": "0px",
+            "position": "static",
+            "textAlign": "center",
+            "verticalAlign": "baseline",
+            "width": "152px"
+          },
+          "text": "Beschikbaarheid                                                 ",
+          "type": "heading"
+        },
+        {
+          "attributes": [],
+          "name": "heading3",
+          "size": "H3",
+          "style": {
+            "borderRadius": "-1px",
+            "float": "none",
+            "marginBottom": "0px",
+            "marginLeft": "525px",
+            "marginRight": "0px",
+            "marginTop": "-30px",
+            "position": "static",
+            "textAlign": "center",
+            "verticalAlign": "baseline",
+            "width": "152px"
+          },
+          "text": "Prestaties                                         ",
+          "type": "heading"
+        },
+        {
+          "attributes": [
+            {
+              "name": "Beschikbaarheid",
+              "value": "50"
+            }
+          ],
+          "name": "BeschikbaarheidDag",
+          "scales": [
+            {
+              "min": 0,
+              "pointers": [
+                {
+                  "fill": "",
+                  "stroke": "",
+                  "template": "",
+                  "value": 50
+                }
+              ],
+              "ranges": [
+                {
+                  "fill": ""
+                },
+                {
+                  "fill": "red",
+                  "from": 0,
+                  "to": 65
+                },
+                {
+                  "fill": "yellow",
+                  "from": 65,
+                  "to": 80
+                },
+                {
+                  "fill": "green",
+                  "from": 80,
+                  "to": 90
+                },
+                {
+                  "fill": "blue",
+                  "from": 90,
+                  "to": 100
+                }
+              ],
+              "showFirstTick": true,
+              "showLastTick": true,
+              "showTickLabels": true,
+              "step": 10,
+              "stroke": "",
+              "strokeWidth": 1,
+              "tickLabelOffset": 20,
+              "tickLength": 1,
+              "tickPosition": "GaugeTickPosition.Outside",
+              "x": 0.5,
+              "y": 0.5
+            }
+          ],
+          "style": {
+            "borderRadius": "0px",
+            "height": "350px",
+            "width": "400px"
+          },
+          "type": "radial-gauge",
+          "visible": true
+        },
+        {
+          "attributes": [
+            {
+              "name": "Prestatie",
+              "value": "50"
+            }
+          ],
+          "name": "PrestatieDag",
+          "scales": [
+            {
+              "min": 0,
+              "pointers": [
+                {
+                  "value": 40
+                }
+              ],
+              "ranges": [
+                {
+                  "fill": ""
+                },
+                {
+                  "fill": "red",
+                  "from": 0,
+                  "to": 75
+                },
+                {
+                  "fill": "yellow",
+                  "from": 75,
+                  "to": 85
+                },
+                {
+                  "fill": "green",
+                  "from": 85,
+                  "to": 95
+                },
+                {
+                  "fill": "blue",
+                  "from": 95,
+                  "to": 100
+                }
+              ],
+              "step": 10,
+              "stroke": "",
+              "strokeWidth": 1,
+              "tickLabelOffset": 20,
+              "tickLength": 1,
+              "tickPosition": "GaugeTickPosition.Outside",
+              "x": 0.5,
+              "y": 0.5
+            }
+          ],
+          "style": {
+            "borderRadius": "0px",
+            "float": "none",
+            "height": "350px",
+            "width": "400px"
+          },
+          "type": "radial-gauge",
+          "visible": true
+        },
+        {
+          "name": "heading0",
+          "size": "H3",
+          "style": {
+            "borderRadius": "-1px",
+            "float": "none",
+            "marginBottom": "0px",
+            "marginLeft": "100px",
+            "marginRight": "0px",
+            "marginTop": "0px",
+            "position": "static",
+            "textAlign": "center",
+            "width": "152px"
+          },
+          "text": "Kwaliteit                                              ",
+          "type": "heading"
+        },
+        {
+          "attributes": [],
+          "name": "heading5",
+          "size": "H3",
+          "style": {
+            "borderRadius": "-1px",
+            "float": "none",
+            "marginBottom": "0px",
+            "marginLeft": "525px",
+            "marginRight": "0px",
+            "marginTop": "-30px",
+            "position": "static",
+            "textAlign": "center",
+            "verticalAlign": "baseline",
+            "width": "152px"
+          },
+          "text": "OEE                                    ",
+          "type": "heading"
+        },
+        {
+          "attributes": [
+            {
+              "name": "Kwaliteit",
+              "value": "50"
+            }
+          ],
+          "name": "KwaliteitDag",
+          "scales": [
+            {
+              "min": 0,
+              "pointers": [
+                {
+                  "value": 40
+                }
+              ],
+              "ranges": [
+                {
+                  "fill": ""
+                },
+                {
+                  "fill": "red",
+                  "from": 0,
+                  "to": 85
+                },
+                {
+                  "fill": "yellow",
+                  "from": 85,
+                  "to": 95
+                },
+                {
+                  "fill": "green",
+                  "from": 95,
+                  "to": 99
+                },
+                {
+                  "fill": "blue",
+                  "from": 99,
+                  "to": 100
+                }
+              ],
+              "step": 10,
+              "stroke": "",
+              "strokeWidth": 1,
+              "tickLabelOffset": 20,
+              "tickLength": 1,
+              "tickPosition": "GaugeTickPosition.Outside",
+              "x": 0.5,
+              "y": 0.5
+            }
+          ],
+          "style": {
+            "borderRadius": "0px",
+            "height": "350px",
+            "width": "400px"
+          },
+          "type": "radial-gauge",
+          "visible": true
+        },
+        {
+          "attributes": [
+            {
+              "name": "OEE",
+              "value": "50"
+            }
+          ],
+          "name": "OEEDag",
+          "scales": [
+            {
+              "min": 0,
+              "pointers": [
+                {
+                  "value": 40
+                }
+              ],
+              "ranges": [
+                {
+                  "fill": ""
+                },
+                {
+                  "fill": "red",
+                  "from": 0,
+                  "to": 41
+                },
+                {
+                  "fill": "yellow",
+                  "from": 41,
+                  "to": 65
+                },
+                {
+                  "fill": "green",
+                  "from": 65,
+                  "to": 85
+                },
+                {
+                  "fill": "blue",
+                  "from": 85,
+                  "to": 100
+                }
+              ],
+              "step": 10,
+              "stroke": "",
+              "strokeWidth": 1,
+              "tickLabelOffset": 20,
+              "tickLength": 1,
+              "tickPosition": "GaugeTickPosition.Outside",
+              "x": 0.5,
+              "y": 0.5
+            }
+          ],
+          "style": {
+            "borderRadius": "0px",
+            "height": "350px",
+            "width": "400px"
+          },
+          "type": "radial-gauge",
+          "visible": true
+        }
+      ],
+      "container": "main",
+      "type": "content"
+    }
+  ],
+  "layout": "Main",
+  "name": "Dagelijks"
+}
