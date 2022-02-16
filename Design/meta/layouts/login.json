@@ -1,6 +1,12 @@
 {
   "components": [
     {
+      "attributes": [
+        {
+          "name": "Expanded",
+          "value": "true"
+        }
+      ],
       "components": [
         {
           "class": "justify-content-center",
@@ -30,16 +36,10 @@
           "type": "row"
         }
       ],
+      "name": "body0",
       "style": {
         "marginLeft": "0px"
       },
-      "attributes": [
-        {
-          "name": "Expanded",
-          "value": "true"
-        }
-      ],
-      "name": "body0",
       "type": "body"
     }
   ],

@@ -37,5 +37,6 @@
   "serverVersion": "6",
   "startPage": "Main",
   "theme": "dark",
+  "themeSettings": null,
   "title": "JairoAndSImmeMQTT"
 }
