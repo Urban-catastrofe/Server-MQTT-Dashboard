@@ -1,0 +1,100 @@
+﻿@page "/maandelijks"
+@layout MainLayout
+@inherits SimmeMqqt.Pages.MaandelijksComponent
+
+@using Radzen
+@using Radzen.Blazor
+<RadzenContent Container="main">
+  <ChildContent>
+    <RadzenHeading Size="H1" Text="Maandelijks">
+    </RadzenHeading>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Beschikbaarheid                                                 ">
+    </RadzenHeading>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Prestaties                                         ">
+    </RadzenHeading>
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" Beschikbaarheid="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="50">
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="65">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="65" To="80">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="80" To="90">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="90" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+    <RadzenRadialGauge style="border-radius: 0px; float: none; height: 350px; width: 400px" Prestatie="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="40">
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="75">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="75" To="85">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="85" To="95">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="95" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; width: 152px" Text="Kwaliteit                                              ">
+    </RadzenHeading>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="OEE                                    ">
+    </RadzenHeading>
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" Kwaliteit="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="40">
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="85">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="85" To="95">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="95" To="99">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="99" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" OEE="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="40">
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="41">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="41" To="65">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="65" To="85">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="85" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+  </ChildContent>
+</RadzenContent>

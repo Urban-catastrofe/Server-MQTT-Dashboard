@@ -1,0 +1,41 @@
+{
+  "cssFiles": [],
+  "dataSources": [],
+  "generator": "@radzen/blazor-server",
+  "https": true,
+  "ignore": [
+    ""
+  ],
+  "javaScriptFiles": [],
+  "layouts": [
+    "Login",
+    "Main"
+  ],
+  "logo": "",
+  "name": "SimmeMQQT",
+  "namespaces": [],
+  "navigation": [
+    "Main",
+    "Uurlijk",
+    "Dagelijks",
+    "Maandelijks",
+    "Forever",
+    "Realtime"
+  ],
+  "pages": [
+    "Main",
+    "Uurlijk",
+    "Dagelijks",
+    "Maandelijks",
+    "Forever",
+    "Realtime"
+  ],
+  "port": 8000,
+  "serverLang": "cs",
+  "serverPort": 5000,
+  "serverProject": true,
+  "serverVersion": "6",
+  "startPage": "Main",
+  "theme": "dark",
+  "title": "JairoAndSImmeMQTT"
+}
