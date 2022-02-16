@@ -16,7 +16,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="50">
+            <RadzenRadialGaugeScalePointer Value="value1">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -36,7 +41,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="value1">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -60,7 +70,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="value1">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -80,7 +95,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="value1">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -98,3 +118,10 @@
     </RadzenRadialGauge>
   </ChildContent>
 </RadzenContent>
+
+@code {
+    bool showValue = true;
+    double value1 = 80;
+    IEnumerable<GaugeTickPosition> tickPositions = Enum.GetValues(typeof(GaugeTickPosition)).Cast<GaugeTickPosition>();
+    GaugeTickPosition tickPosition = GaugeTickPosition.Inside;
+}

@@ -50,19 +50,22 @@
           "attributes": [
             {
               "name": "Beschikbaarheid",
-              "value": "50"
+              "value": "21"
             }
           ],
           "name": "BeschikbaarheidUur",
           "scales": [
             {
+              "formatter": "",
               "min": 0,
               "pointers": [
                 {
                   "fill": "",
+                  "formatString": "",
+                  "showValue": true,
                   "stroke": "",
                   "template": "",
-                  "value": 50
+                  "value": 1
                 }
               ],
               "ranges": [
@@ -279,7 +282,7 @@
               "min": 0,
               "pointers": [
                 {
-                  "value": 40
+                  "value": 25
                 }
               ],
               "ranges": [
