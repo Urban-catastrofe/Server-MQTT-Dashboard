@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
 
 namespace SimmeMqqt
 {
@@ -15,6 +19,8 @@ namespace SimmeMqqt
     {
         public static void Main(string[] args)
         {
+            Subscribe_Topic()
+
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -25,5 +31,6 @@ namespace SimmeMqqt
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
                 });
+
     }
 }

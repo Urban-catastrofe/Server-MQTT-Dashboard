@@ -2,7 +2,7 @@
 
 namespace SimmeMqqt.Model
 {
-    public class MachineData
+    public class MQTTMachineData
     {
         public DateTime Timestamp { get; set; }
         public int MachineID { get; set; }
