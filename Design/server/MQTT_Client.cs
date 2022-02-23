@@ -32,37 +32,36 @@ namespace SimmeMqqt
                     Console.WriteLine();
                     if(e.ApplicationMessage.Topic.Contains("timestamp"))
                     {
-                        EFMachineData.Timestamp = Convert.ToDateTime(e.ApplicationMessage.Payload);
+                        EFMachineData.Timestamp = Convert.ToDateTime(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if(e.ApplicationMessage.Topic.Contains("naam"))
                     {
-                        EFMachineData.MachineName = Convert.ToString(e.ApplicationMessage.Payload);
+                        EFMachineData.MachineName = Convert.ToString(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("ideale_cyclus_tijd"))
                     {
-                        EFMachineData.IdealCyclus = Convert.ToInt32(e.ApplicationMessage.Payload);
+                        EFMachineData.IdealCyclus = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("totaal_geproduceerd"))
                     {
-                        EFMachineData.TotalProduction = Convert.ToInt32(e.ApplicationMessage.Payload);
+                        EFMachineData.TotalProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("goed_geproduceerd"))
                     {
-                        EFMachineData.TotalGoodProduction = Convert.ToInt32(e.ApplicationMessage.Payload);
+                        EFMachineData.TotalGoodProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("id"))
                     {
-                        EFMachineData.MachineID = Convert.ToInt32(e.ApplicationMessage.Payload);
+                        EFMachineData.MachineID = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("pauze"))
                     {
-                        EFMachineData.Break = Convert.ToBoolean(e.ApplicationMessage.Payload);
+                        EFMachineData.Break = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("storing"))
                     {
-                        EFMachineData.Failure = Convert.ToBoolean(e.ApplicationMessage.Payload);
+                        EFMachineData.Failure = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
-
                 });
                 mqttClient.UseConnectedHandler(async e =>
                 {
