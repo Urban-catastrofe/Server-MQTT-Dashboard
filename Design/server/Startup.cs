@@ -19,6 +19,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 using Radzen;
+using Microsoft.EntityFrameworkCore.Storage;
+using SimmeMqqt.EntityFramework;
+
 namespace SimmeMqqt
 {
     public partial class Startup
@@ -62,6 +65,9 @@ namespace SimmeMqqt
             services.AddScoped<NotificationService>();
             services.AddScoped<TooltipService>();
             services.AddScoped<ContextMenuService>();
+
+            //services.AddDbContext<MachineData>(options =>
+            //   options.UseSqlServer(Configuration.GetConnectionString("Database")));
 
             OnConfigureServices(services);
         }

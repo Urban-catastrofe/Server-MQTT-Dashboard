@@ -8,10 +8,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Client.Options;
+
 
 namespace SimmeMqqt
 {
@@ -19,7 +16,7 @@ namespace SimmeMqqt
     {
         public static void Main(string[] args)
         {
-            Subscribe_Topic()
+            MQTT_Client.Subscribe_Topic();
 
             CreateHostBuilder(args).Build().Run();
         }

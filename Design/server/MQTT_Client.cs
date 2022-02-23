@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 using System;
 using MQTTnet.Client.Options;
 using System.Text;
+using SimmeMqqt.Model;
 
 namespace SimmeMqqt
 {
-
-    class MQTT_Client
+    public class MQTT_Client
     {
-        private static CancellationTokenSource cts = new CancellationTokenSource(); //TODO create token using the Timeout delay from config
-        private static async Task Subscribe_Topic()
+        public static CancellationTokenSource cts = new CancellationTokenSource(); //TODO create token using the Timeout delay from config
+        public static async Task Subscribe_Topic()
         {
+            var EFMachineData = new MQTTMachineData();
             var factory = new MqttFactory();
             var mqttClient = factory.CreateMqttClient();
             var options = new MqttClientOptionsBuilder()
@@ -29,6 +30,39 @@ namespace SimmeMqqt
                     Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
                     Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
                     Console.WriteLine();
+                    if(e.ApplicationMessage.Topic.Contains("timestamp"))
+                    {
+                        EFMachineData.Timestamp = Convert.ToDateTime(e.ApplicationMessage.Payload);
+                    }
+                    else if(e.ApplicationMessage.Topic.Contains("naam"))
+                    {
+                        EFMachineData.MachineName = Convert.ToString(e.ApplicationMessage.Payload);
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("ideale_cyclus_tijd"))
+                    {
+                        EFMachineData.IdealCyclus = Convert.ToInt32(e.ApplicationMessage.Payload);
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("totaal_geproduceerd"))
+                    {
+                        EFMachineData.TotalProduction = Convert.ToInt32(e.ApplicationMessage.Payload);
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("goed_geproduceerd"))
+                    {
+                        EFMachineData.TotalGoodProduction = Convert.ToInt32(e.ApplicationMessage.Payload);
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("id"))
+                    {
+                        EFMachineData.MachineID = Convert.ToInt32(e.ApplicationMessage.Payload);
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("pauze"))
+                    {
+                        EFMachineData.Break = Convert.ToBoolean(e.ApplicationMessage.Payload);
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("storing"))
+                    {
+                        EFMachineData.Failure = Convert.ToBoolean(e.ApplicationMessage.Payload);
+                    }
+
                 });
                 mqttClient.UseConnectedHandler(async e =>
                 {
