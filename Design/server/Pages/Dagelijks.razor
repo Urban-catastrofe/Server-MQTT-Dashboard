@@ -12,11 +12,16 @@
     </RadzenHeading>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Prestaties                                         ">
     </RadzenHeading>
-    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" Beschikbaarheid="50">
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px">
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
             <RadzenRadialGaugeScalePointer Value="50">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>km/h</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>

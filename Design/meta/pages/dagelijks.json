@@ -47,12 +47,7 @@
           "type": "heading"
         },
         {
-          "attributes": [
-            {
-              "name": "Beschikbaarheid",
-              "value": "50"
-            }
-          ],
+          "attributes": [],
           "name": "BeschikbaarheidDag",
           "scales": [
             {
@@ -61,7 +56,7 @@
                 {
                   "fill": "",
                   "stroke": "",
-                  "template": "",
+                  "template": "<h4>\n   @data.Value <sup>km/h</sup>\n</h4>",
                   "value": 50
                 }
               ],

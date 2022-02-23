@@ -16,7 +16,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="50">
+            <RadzenRadialGaugeScalePointer Value="Beschikbaarheid">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -36,7 +41,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="Prestaties">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -60,7 +70,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="Kwaliteit">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -80,7 +95,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="OEE">
+              <Template Context="data">
+              <h4>
+                 @data.Value <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -98,3 +118,18 @@
     </RadzenRadialGauge>
   </ChildContent>
 </RadzenContent>
+
+@code {
+    double Beschikbaarheid = 0;
+    double Prestaties = 0;
+    double Kwaliteit = 0;
+    double OEE = 0;
+
+    public void SetDataRealtime(double beschikbaarheid, double prestaties, double kwaliteit, double oEE)
+    {
+        Beschikbaarheid = beschikbaarheid;
+        Prestaties = prestaties;
+        Kwaliteit = kwaliteit;
+        OEE = oEE;
+    }
+}
