@@ -5,6 +5,10 @@ namespace SimmeMqqt.EntityFramework
 {
     public class MachineData : DbContext
     {
+        public MachineData() : base()
+        {
+
+        }
         public DbSet<MQTTMachineData> MachineDatas { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

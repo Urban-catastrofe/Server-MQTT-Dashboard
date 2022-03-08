@@ -6,6 +6,7 @@ using System;
 using MQTTnet.Client.Options;
 using System.Text;
 using SimmeMqqt.Model;
+using SimmeMqqt.Service;
 
 namespace SimmeMqqt
 {
@@ -61,6 +62,7 @@ namespace SimmeMqqt
                     else if (e.ApplicationMessage.Topic.Contains("storing"))
                     {
                         EFMachineData.Failure = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        DashboardService.UpdateDashboard(EFMachineData);
                     }
                 });
                 mqttClient.UseConnectedHandler(async e =>
