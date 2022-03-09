@@ -6,9 +6,7 @@ using System;
 using MQTTnet.Client.Options;
 using System.Text;
 using SimmeMqqt.Model;
-using SimmeMqqt.Controllers;
-using System.Net.Http;
-using static System.Net.WebRequestMethods;
+using SimmeMqqt.EntityFramework;
 
 namespace SimmeMqqt
 {
@@ -64,9 +62,13 @@ namespace SimmeMqqt
                     else if (e.ApplicationMessage.Topic.Contains("goed_geproduceerd"))
                     {
                         EFMachineData.TotalGoodProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                 
-                        //var response = await Http.SendJsonAsync<HttpResponseMessage>(HttpMethod.Post, "DashboardController/UpdateRealtime/", EFMachineData);
+                        using (var context = new MachineData())
+                        {
+                            var Data = EFMachineData;
 
+                            context.MachineDatas.Add(Data);
+                            context.SaveChanges();
+                        }
                     }
              
                 });
