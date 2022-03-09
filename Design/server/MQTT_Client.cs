@@ -6,6 +6,7 @@ using System;
 using MQTTnet.Client.Options;
 using System.Text;
 using SimmeMqqt.Model;
+using SimmeMqqt.EntityFramework;
 
 namespace SimmeMqqt
 {
@@ -18,7 +19,7 @@ namespace SimmeMqqt
             var factory = new MqttFactory();
             var mqttClient = factory.CreateMqttClient();
             var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("broker.hivemq.com")
+                .WithTcpServer("185.229.236.100")
                 .Build();
             try
             {
@@ -34,13 +35,25 @@ namespace SimmeMqqt
                     {
                         EFMachineData.Timestamp = Convert.ToDateTime(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
+                    else if (e.ApplicationMessage.Topic.Contains("ideale_cyclus_tijd"))
+                    {
+                        EFMachineData.IdealCyclus = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("id"))
+                    {
+                        EFMachineData.MachineID = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                    }
                     else if(e.ApplicationMessage.Topic.Contains("naam"))
                     {
                         EFMachineData.MachineName = Convert.ToString(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
-                    else if (e.ApplicationMessage.Topic.Contains("ideale_cyclus_tijd"))
+                    else if (e.ApplicationMessage.Topic.Contains("storing"))
                     {
-                        EFMachineData.IdealCyclus = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        EFMachineData.Failure = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                    }
+                    else if (e.ApplicationMessage.Topic.Contains("pauze"))
+                    {
+                        EFMachineData.Break = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                     }
                     else if (e.ApplicationMessage.Topic.Contains("totaal_geproduceerd"))
                     {
@@ -49,19 +62,15 @@ namespace SimmeMqqt
                     else if (e.ApplicationMessage.Topic.Contains("goed_geproduceerd"))
                     {
                         EFMachineData.TotalGoodProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        using (var context = new MachineData())
+                        {
+                            var Data = EFMachineData;
+
+                            context.MachineDatas.Add(Data);
+                            context.SaveChanges();
+                        }
                     }
-                    else if (e.ApplicationMessage.Topic.Contains("id"))
-                    {
-                        EFMachineData.MachineID = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("pauze"))
-                    {
-                        EFMachineData.Break = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("storing"))
-                    {
-                        EFMachineData.Failure = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
+             
                 });
                 mqttClient.UseConnectedHandler(async e =>
                 {

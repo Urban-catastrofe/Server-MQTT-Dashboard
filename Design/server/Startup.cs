@@ -17,6 +17,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.ResponseCompression;
+using SimmeMqqt.Hubs;
 
 using Radzen;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -92,12 +94,14 @@ namespace SimmeMqqt
                 });
             }
             app.UseStaticFiles();
+            
 
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
+                endpoints.MapHub<DashboardHub>("/dashboardHub");
                 endpoints.MapFallbackToPage("/_Host");
             });
 

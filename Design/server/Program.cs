@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 
+
 namespace SimmeMqqt
 {
     public class Program

@@ -1,9 +1,12 @@
 ﻿@page "/realtime"
 @layout MainLayout
 @inherits SimmeMqqt.Pages.RealtimeComponent
+@inject HttpClient Http;
 
 @using Radzen
 @using Radzen.Blazor
+@using SimmeMqqt.Controllers
+
 <RadzenContent Container="main">
   <ChildContent>
     <RadzenHeading Size="H1" Text="Realtime">
@@ -127,9 +130,14 @@
 
     public void SetDataRealtime(double beschikbaarheid, double prestaties, double kwaliteit, double oEE)
     {
-        Beschikbaarheid = beschikbaarheid;
-        Prestaties = prestaties;
-        Kwaliteit = kwaliteit;
-        OEE = oEE;
+        Beschikbaarheid = beschikbaarheid * 100;
+        Prestaties = prestaties * 100;
+        Kwaliteit = kwaliteit * 100;
+        OEE = oEE * 100;
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+
     }
 }

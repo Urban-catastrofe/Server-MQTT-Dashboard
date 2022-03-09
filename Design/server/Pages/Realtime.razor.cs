@@ -9,6 +9,6 @@ namespace SimmeMqqt.Pages
 {
     public partial class RealtimeComponent
     {
-
+     
     }
 }
