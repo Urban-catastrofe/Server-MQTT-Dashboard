@@ -23,6 +23,8 @@ using SimmeMqqt.Hubs;
 using Radzen;
 using Microsoft.EntityFrameworkCore.Storage;
 using SimmeMqqt.EntityFramework;
+using SimmeMqqt.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SimmeMqqt
 {
@@ -54,8 +56,10 @@ namespace SimmeMqqt
                 BaseAddress = new Uri(uriHelper.BaseUri)
               };
             });
+            services.AddSingleton<DashboardService>();
 
             services.AddHttpClient();
+            services.AddSignalR();
 
             services.AddRazorPages();
             services.AddServerSideBlazor().AddHubOptions(o =>
@@ -79,6 +83,9 @@ namespace SimmeMqqt
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var myClass = app.ApplicationServices.GetService<DashboardService>();
+            myClass.SetTimer();
+
             OnConfiguring(app, env);
             if (env.IsDevelopment())
             {

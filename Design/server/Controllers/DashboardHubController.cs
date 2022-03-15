@@ -16,7 +16,7 @@ using System.Timers;
 
 namespace SimmeMqqt.Controllers
 {
-    public class DashboardHubController : ControllerBase
+    public class DashboardHubController : Controller
     {
         public readonly IHubContext<DashboardHub> _hubContext;
         public Timer aTimer;

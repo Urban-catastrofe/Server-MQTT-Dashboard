@@ -70,7 +70,7 @@ namespace SimmeMqqt
                             context.SaveChanges();
                         }
                     }
-             
+         
                 });
                 mqttClient.UseConnectedHandler(async e =>
                 {
