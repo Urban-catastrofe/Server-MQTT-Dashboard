@@ -2,10 +2,11 @@
 @layout MainLayout
 @inherits SimmeMqqt.Pages.RealtimeComponent
 @inject HttpClient Http;
-
+@inject NavigationManager NavigationManager
 @using Radzen
 @using Radzen.Blazor
 @using SimmeMqqt.Controllers
+@using Microsoft.AspNetCore.SignalR.Client
 
 <RadzenContent Container="main">
   <ChildContent>
@@ -123,10 +124,28 @@
 </RadzenContent>
 
 @code {
-    double Beschikbaarheid = 0;
-    double Prestaties = 0;
-    double Kwaliteit = 0;
-    double OEE = 0;
+    public double Beschikbaarheid = 0;
+    public double Prestaties = 0;
+    public double Kwaliteit = 0;
+    public double OEE = 0;
+
+    public HubConnection? hubConnection;
+
+    protected async override Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<double,double,double,double>("RealtimeData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE) =>
+        {
+            SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE);
+
+        });
+
+        await hubConnection.StartAsync();
+    }
 
     public void SetDataRealtime(double beschikbaarheid, double prestaties, double kwaliteit, double oEE)
     {
@@ -134,10 +153,5 @@
         Prestaties = prestaties * 100;
         Kwaliteit = kwaliteit * 100;
         OEE = oEE * 100;
-    }
-
-    protected async override Task OnInitializedAsync()
-    {
-
     }
 }

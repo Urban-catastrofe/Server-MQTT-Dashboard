@@ -1,35 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SimmeMqqt.EntityFramework;
-using SimmeMqqt.Model;
-using SimmeMqqt.Pages;
-using System.Linq;
-using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.SignalR;
+using SimmeMqqt.Controllers;
 using SimmeMqqt.Hubs;
-using System.Timers;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 
-namespace SimmeMqqt.Controllers
+namespace SimmeMqqt.Services
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class DashboardController : ControllerBase
+    public class DashboardService
     {
         public readonly IHubContext<DashboardHub> _hubContext;
         public Timer aTimer;
-        public DashboardController(IHubContext<DashboardHub> hubContext)
+        public DashboardService(IHubContext<DashboardHub> hubContext)
         {
+            Console.WriteLine("helphub");
             _hubContext = hubContext;
             SetTimer();
         }
-        private void SetTimer()
+
+        public async Task SetTimer()
         {
             // Create a timer with a two second interval.
-            aTimer = new Timer(500);
+            aTimer = new Timer(1000);
             // Hook up the Elapsed event for the timer. 
             aTimer.Elapsed += UpdateDashboard;
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
+            aTimer.Start();
         }
 
         public void UpdateDashboard(Object source, ElapsedEventArgs e)
@@ -40,7 +38,7 @@ namespace SimmeMqqt.Controllers
 
         public void SetRealtimeData()
         {
-            using (var context = new MachineData())
+            using (var context = new EntityFramework.MachineData())
             {
                 var query = context.MachineDatas
                                    .OrderByDescending(p => p.Id)
@@ -63,7 +61,7 @@ namespace SimmeMqqt.Controllers
                 _hubContext.Clients.All.SendAsync("RealtimeData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
         }
-
-
     }
+
+}
 }
