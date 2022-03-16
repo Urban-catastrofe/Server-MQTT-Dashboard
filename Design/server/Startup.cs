@@ -58,6 +58,7 @@ namespace SimmeMqqt
             });
             services.AddSingleton<DashboardService>();
             services.AddSingleton<DashboardHub>();
+            services.AddSingleton<MQTT_Client>();
 
             services.AddHttpClient();
             services.AddSignalR();
@@ -85,7 +86,8 @@ namespace SimmeMqqt
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             var myClass = app.ApplicationServices.GetService<DashboardService>();
-            myClass.SetTimer();
+
+            var myClass2 = app.ApplicationServices.GetService<MQTT_Client>();
 
             OnConfiguring(app, env);
             if (env.IsDevelopment())

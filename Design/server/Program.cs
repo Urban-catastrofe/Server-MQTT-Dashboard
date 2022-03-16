@@ -17,8 +17,6 @@ namespace SimmeMqqt
     {
         public static void Main(string[] args)
         {
-            MQTT_Client.Subscribe_Topic();
-
             CreateHostBuilder(args).Build().Run();
         }
 

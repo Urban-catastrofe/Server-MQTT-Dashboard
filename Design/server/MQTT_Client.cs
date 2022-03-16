@@ -12,12 +12,19 @@ namespace SimmeMqqt
 {
     public class MQTT_Client
     {
-        public static CancellationTokenSource cts = new CancellationTokenSource(); //TODO create token using the Timeout delay from config
-        public static async Task Subscribe_Topic()
+        public MQTT_Client()
+        {
+            Console.WriteLine("JESUS FUCKIGN CHRITS");
+            Subscribe_Topic();
+        }
+
+        public MQTTMachineData EFMachineData;
+        public CancellationTokenSource cts = new CancellationTokenSource(); //TODO create token using the Timeout delay from config
+        public async Task Subscribe_Topic()
         {
             while(true)
             {
-                var EFMachineData = new MQTTMachineData();
+                EFMachineData = new MQTTMachineData();
                 var factory = new MqttFactory();
                 var mqttClient = factory.CreateMqttClient();
                 var options = new MqttClientOptionsBuilder()
@@ -64,7 +71,7 @@ namespace SimmeMqqt
                         else if (e.ApplicationMessage.Topic == "gc/machine1/goed_geproduceerd")
                         {
                             EFMachineData.TotalGoodProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                            delayedWork(EFMachineData);
+                            delayedWork();
                         }
                     });
                     mqttClient.UseConnectedHandler(async e =>
@@ -94,13 +101,13 @@ namespace SimmeMqqt
             }
         }
 
-        private static async Task delayedWork(MQTTMachineData Data)
+        private async Task delayedWork()
         {
             await Task.Delay(2000);
-            AddSQLData(Data);
+            AddSQLData(EFMachineData);
         }
 
-        public static void AddSQLData(MQTTMachineData data)
+        public void AddSQLData(MQTTMachineData data)
         {
             using (var context = new MachineData())
             {
