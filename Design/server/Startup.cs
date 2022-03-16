@@ -57,6 +57,7 @@ namespace SimmeMqqt
               };
             });
             services.AddSingleton<DashboardService>();
+            services.AddSingleton<DashboardHub>();
 
             services.AddHttpClient();
             services.AddSignalR();

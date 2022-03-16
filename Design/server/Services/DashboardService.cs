@@ -46,20 +46,23 @@ namespace SimmeMqqt.Services
                 int TotalFailureProcent;
                 if (query.Failure == true)
                 {
-                    TotalFailureProcent = 100;
+                    TotalFailureProcent = 0;
                 }
                 else
                 {
-                    TotalFailureProcent = 0;
+                    TotalFailureProcent = 1;
                 }
 
-                var Beschikbaarheid = TotalFailureProcent;
-                var Prestaties = ((float)query.TotalProduction / (float)query.IdealCyclus) * 100;
-                var Kwaliteit = ((float)query.TotalGoodProduction / (float)query.TotalProduction) * 100;
-                var OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit) * 100;
+                float Beschikbaarheid = TotalFailureProcent;
+                float Prestaties = ((float)query.TotalProduction / (float)query.IdealCyclus);
+                float Kwaliteit = ((float)query.TotalGoodProduction / (float)query.TotalProduction);
+                float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
 
                 //DashboardHub.SendRealtimeData(Beschikbaarheid, Prestaties, Kwaliteit, OEE);
-
+                Beschikbaarheid = Beschikbaarheid * 100;
+                Prestaties = Prestaties * 100;
+                Kwaliteit = Kwaliteit * 100;
+                OEE = OEE * 100;
                 _hubContext.Clients.All.SendAsync("RealtimeData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
         }

@@ -6,8 +6,8 @@
 @using Radzen
 @using Radzen.Blazor
 @using SimmeMqqt.Controllers
+@using Microsoft.Extensions.DependencyInjection;
 @using Microsoft.AspNetCore.SignalR.Client
-
 <RadzenContent Container="main">
   <ChildContent>
     <RadzenHeading Size="H1" Text="Realtime">
@@ -122,14 +122,13 @@
     </RadzenRadialGauge>
   </ChildContent>
 </RadzenContent>
-
 @code {
-    public double Beschikbaarheid;
-    public double Prestaties;
-    public double Kwaliteit;
-    public double OEE ;
+    private float Beschikbaarheid;
+    private float Prestaties;
+    private float Kwaliteit;
+    private float OEE;
 
-    public HubConnection? hubConnection;
+    private HubConnection hubConnection;
 
     protected async override Task OnInitializedAsync()
     {
@@ -138,16 +137,15 @@
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On<int,int,int,int>("RealtimeData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE) =>
+        hubConnection.On<float,float,float,float>("RealtimeData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE) =>
            {
                SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE);
-
            });
 
         await hubConnection.StartAsync();
     }
 
-    public void SetDataRealtime(int beschikbaarheid, int prestaties, int kwaliteit, int oEE)
+    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE)
     {
         Beschikbaarheid = beschikbaarheid;
         Prestaties = prestaties;

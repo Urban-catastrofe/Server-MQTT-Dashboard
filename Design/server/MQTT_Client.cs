@@ -15,87 +15,100 @@ namespace SimmeMqqt
         public static CancellationTokenSource cts = new CancellationTokenSource(); //TODO create token using the Timeout delay from config
         public static async Task Subscribe_Topic()
         {
-            var EFMachineData = new MQTTMachineData();
-            var factory = new MqttFactory();
-            var mqttClient = factory.CreateMqttClient();
-            var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("185.229.236.100")
-                .Build();
-            try
+            while(true)
             {
-                mqttClient.UseApplicationMessageReceivedHandler(async e =>
+                var EFMachineData = new MQTTMachineData();
+                var factory = new MqttFactory();
+                var mqttClient = factory.CreateMqttClient();
+                var options = new MqttClientOptionsBuilder()
+                    .WithTcpServer("185.229.236.100")
+                    .Build();
+                try
                 {
-                    Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                    Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                    Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                    Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                    Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
-                    Console.WriteLine();
-                    if(e.ApplicationMessage.Topic.Contains("timestamp"))
+                    mqttClient.UseApplicationMessageReceivedHandler(async e =>
                     {
-                        EFMachineData.Timestamp = Convert.ToDateTime(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("ideale_cyclus_tijd"))
-                    {
-                        EFMachineData.IdealCyclus = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("id"))
-                    {
-                        EFMachineData.MachineID = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if(e.ApplicationMessage.Topic.Contains("naam"))
-                    {
-                        EFMachineData.MachineName = Convert.ToString(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("storing"))
-                    {
-                        EFMachineData.Failure = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("pauze"))
-                    {
-                        EFMachineData.Break = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("totaal_geproduceerd"))
-                    {
-                        EFMachineData.TotalProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                    }
-                    else if (e.ApplicationMessage.Topic.Contains("goed_geproduceerd"))
-                    {
-                        EFMachineData.TotalGoodProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
-                        using (var context = new MachineData())
+                        Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
+                        Console.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
+                        Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                        Console.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
+                        Console.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}");
+                        Console.WriteLine();
+                        if (e.ApplicationMessage.Topic == "gc/machine1/timestamp")
                         {
-                            var Data = EFMachineData;
-
-                            context.MachineDatas.Add(Data);
-                            context.SaveChanges();
+                            EFMachineData.Timestamp = Convert.ToDateTime(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
                         }
-                    }
-         
-                });
-                mqttClient.UseConnectedHandler(async e =>
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/ideale_cyclus_tijd")
+                        {
+                            EFMachineData.IdealCyclus = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        }
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/id")
+                        {
+                            EFMachineData.MachineID = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        }
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/naam")
+                        {
+                            EFMachineData.MachineName = Convert.ToString(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        }
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/storing")
+                        {
+                            EFMachineData.Failure = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        }
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/pauze")
+                        {
+                            EFMachineData.Break = Convert.ToBoolean(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        }
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/totaal_geproduceerd")
+                        {
+                            EFMachineData.TotalProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                        }
+                        else if (e.ApplicationMessage.Topic == "gc/machine1/goed_geproduceerd")
+                        {
+                            EFMachineData.TotalGoodProduction = Convert.ToInt32(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                            delayedWork(EFMachineData);
+                        }
+                    });
+                    mqttClient.UseConnectedHandler(async e =>
+                    {
+                        Console.WriteLine("### CONNECTED WITH SERVER ###");
+
+                    // Subscribe to a topic
+                    await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("gc/machine1/#").Build());
+
+                        Console.WriteLine("### SUBSCRIBED ###");
+                    });
+                    await mqttClient.ConnectAsync(options, cts.Token);
+                    // UNCOMMENT AND YOU WILL RECEIVE A MESSAGE Task.Run(() => mqttClient.PublishAsync("MyClientIDHere/Device_2/Instance_1","met=Temperature~data=29"));
+
+                }
+
+                catch (OperationCanceledException)
                 {
-                    Console.WriteLine("### CONNECTED WITH SERVER ###");
+                    Console.WriteLine("task cancelled");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
 
-                // Subscribe to a topic
-                await mqttClient.SubscribeAsync(new TopicFilterBuilder().WithTopic("gc/machine1/#").Build());
-
-                    Console.WriteLine("### SUBSCRIBED ###");
-                });
-                await mqttClient.ConnectAsync(options, cts.Token);
-                // UNCOMMENT AND YOU WILL RECEIVE A MESSAGE Task.Run(() => mqttClient.PublishAsync("MyClientIDHere/Device_2/Instance_1","met=Temperature~data=29"));
-
+                Console.ReadKey();
             }
+        }
 
-            catch (OperationCanceledException)
+        private static async Task delayedWork(MQTTMachineData Data)
+        {
+            await Task.Delay(2000);
+            AddSQLData(Data);
+        }
+
+        public static void AddSQLData(MQTTMachineData data)
+        {
+            using (var context = new MachineData())
             {
-                Console.WriteLine("task cancelled");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+                var Data = data;
 
-            Console.ReadKey();
+                context.MachineDatas.Add(Data);
+                context.SaveChanges();
+            }
         }
     }
 }
