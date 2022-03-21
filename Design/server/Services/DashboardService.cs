@@ -70,6 +70,23 @@ namespace SimmeMqqt.Services
                 Prestaties = Prestaties * 100;
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
+
+                if(Beschikbaarheid == float.NaN)
+                {
+                    Beschikbaarheid = 0;
+                }
+                if (Prestaties == float.NaN)
+                {
+                    Prestaties = 0;
+                }
+                if (Kwaliteit == float.NaN)
+                {
+                    Kwaliteit = 0;
+                }
+                if (OEE == float.NaN)
+                {
+                    OEE = 0;
+                }
                 _hubContext.Clients.All.SendAsync("RealtimeData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
         }
@@ -111,6 +128,23 @@ namespace SimmeMqqt.Services
                 Prestaties = Prestaties * 100;
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
+
+                if (Beschikbaarheid == float.NaN)
+                {
+                    Beschikbaarheid = 0;
+                }
+                if (Prestaties == float.NaN)
+                {
+                    Prestaties = 0;
+                }
+                if (Kwaliteit == float.NaN)
+                {
+                    Kwaliteit = 0;
+                }
+                if (OEE == float.NaN)
+                {
+                    OEE = 0;
+                }
                 _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
         }
