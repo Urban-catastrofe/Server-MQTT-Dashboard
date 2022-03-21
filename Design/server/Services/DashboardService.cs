@@ -35,6 +35,7 @@ namespace SimmeMqqt.Services
         {
             SetRealtimeData();
             SetUurlijkData();
+            SetForeverData();
         }
 
 
@@ -147,8 +148,67 @@ namespace SimmeMqqt.Services
                 }
                 _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
+
+        }
+        public void SetForeverData()
+        {
+            using (var context = new EntityFramework.MachineData())
+            {
+                var query = context.MachineDatas
+                                   .OrderByDescending(p => p.Id)
+                                   .Where(p => p.Timestamp > DateTime.UtcNow.AddHours(-1))
+                                   .ToList();
+                int TotalFailureProcent;
+
+                var Machinedatas = new MQTTMachineData();
+
+                Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
+                Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
+                Machinedatas.IdealCyclus = query.Sum(p => p.IdealCyclus);
+
+                int FailureTrue = query.Where(c => c.Failure == true).Count();
+                int FailureFalse = query.Where(c => c.Failure == false).Count();
+
+                float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
+                if (FailureTrue == 0)
+                {
+                    Beschikbaarheid = 1;
+                }
+                else if (FailureFalse == 0)
+                {
+                    Beschikbaarheid = 0;
+                }
+
+                float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
+                float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
+                float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
+
+                //DashboardHub.SendRealtimeData(Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+                Beschikbaarheid = Beschikbaarheid * 100;
+                Prestaties = Prestaties * 100;
+                Kwaliteit = Kwaliteit * 100;
+                OEE = OEE * 100;
+
+                if (Beschikbaarheid == float.NaN)
+                {
+                    Beschikbaarheid = 0;
+                }
+                if (Prestaties == float.NaN)
+                {
+                    Prestaties = 0;
+                }
+                if (Kwaliteit == float.NaN)
+                {
+                    Kwaliteit = 0;
+                }
+                if (OEE == float.NaN)
+                {
+                    OEE = 0;
+                }
+                _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+            }
         }
     }
-
 }
+
 
