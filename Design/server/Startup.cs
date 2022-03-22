@@ -75,7 +75,8 @@ namespace SimmeMqqt
             services.AddScoped<ContextMenuService>();
 
             //services.AddDbContext<MachineData>(options =>
-            //   options.UseSqlServer(Configuration.GetConnectionString("Database")));
+            //           options.UseMySql("Data Source=sql11.freesqldatabase.com;port=3306;Initial Catalog=sql11480795;User=sql11480795;Password=sXWQ4MEyxW;",
+            //    new MySqlServerVersion(new Version(7, 0, 33))));
 
             OnConfigureServices(services);
         }

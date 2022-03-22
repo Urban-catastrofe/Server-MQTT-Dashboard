@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimmeMqqt.EntityFramework;
@@ -12,17 +11,15 @@ using SimmeMqqt.EntityFramework;
 namespace SimmeMqqt.Migrations
 {
     [DbContext(typeof(MachineData))]
-    [Migration("20220223110113_AddBlogCreatedTimestamp")]
-    partial class AddBlogCreatedTimestamp
+    [Migration("20220322160937_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.2")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("SimmeMqqt.Model.MQTTMachineData", b =>
                 {
@@ -30,13 +27,11 @@ namespace SimmeMqqt.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
                     b.Property<bool>("Break")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("Failure")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("IdealCyclus")
                         .HasColumnType("int");
@@ -45,10 +40,10 @@ namespace SimmeMqqt.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("MachineName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("TotalGoodProduction")
                         .HasColumnType("int");
