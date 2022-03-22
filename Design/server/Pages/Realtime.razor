@@ -23,7 +23,7 @@
             <RadzenRadialGaugeScalePointer Value="@Beschikbaarheid">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -48,7 +48,7 @@
             <RadzenRadialGaugeScalePointer Value="@Prestaties">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -77,7 +77,7 @@
             <RadzenRadialGaugeScalePointer Value="@Kwaliteit">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -102,7 +102,7 @@
             <RadzenRadialGaugeScalePointer Value="@OEE">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>

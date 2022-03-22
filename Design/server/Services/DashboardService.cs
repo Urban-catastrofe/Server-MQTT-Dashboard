@@ -35,10 +35,9 @@ namespace SimmeMqqt.Services
         {
             SetRealtimeData();
             SetUurlijkData();
-            SetForeverData();
+            SetDailyData();
+            SetMaandelijksData();
         }
-
-
         public void SetRealtimeData()
         {
             using (var context = new EntityFramework.MachineData())
@@ -72,53 +71,46 @@ namespace SimmeMqqt.Services
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
 
-                if(Beschikbaarheid == float.NaN)
+                if(Beschikbaarheid != Beschikbaarheid)
                 {
                     Beschikbaarheid = 0;
                 }
-                if (Prestaties == float.NaN)
+                if (Prestaties != Prestaties)
                 {
                     Prestaties = 0;
                 }
-                if (Kwaliteit == float.NaN)
+                if (Kwaliteit != Kwaliteit)
                 {
                     Kwaliteit = 0;
                 }
-                if (OEE == float.NaN)
+                if (OEE != OEE)
                 {
                     OEE = 0;
                 }
                 _hubContext.Clients.All.SendAsync("RealtimeData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
         }
-
         public void SetUurlijkData()
         {
             using (var context = new EntityFramework.MachineData())
             {
                 var query = context.MachineDatas
                                    .OrderByDescending(p => p.Id)
-                                   .Where(p => p.Timestamp > DateTime.UtcNow.AddHours(-1))
+                                   .Where(p => p.Timestamp >= DateTime.UtcNow.AddHours(-1))
                                    .ToList();
                 int TotalFailureProcent;
+                query.RemoveAll(x => x.Break == true);
 
                 var Machinedatas = new MQTTMachineData();
 
                 Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
                 Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
-                Machinedatas.IdealCyclus = query.Sum(p => p.IdealCyclus);
-
+                var GoodData = query.Where(s => s.Failure == false);
+                Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
                 int FailureTrue = query.Where(c => c.Failure == true).Count();
-                int FailureFalse = query.Where(c => c.Failure == false).Count();
+                int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
                 float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
-                if (FailureTrue == 0)
-                {
-                    Beschikbaarheid = 1;
-                }else if (FailureFalse == 0)
-                {
-                    Beschikbaarheid = 0;
-                }
 
                 float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
                 float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
@@ -130,54 +122,98 @@ namespace SimmeMqqt.Services
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
 
-                if (Beschikbaarheid == float.NaN)
+                if (Beschikbaarheid != Beschikbaarheid)
                 {
                     Beschikbaarheid = 0;
                 }
-                if (Prestaties == float.NaN)
+                if (Prestaties != Prestaties)
                 {
                     Prestaties = 0;
                 }
-                if (Kwaliteit == float.NaN)
+                if (Kwaliteit != Kwaliteit)
                 {
                     Kwaliteit = 0;
                 }
-                if (OEE == float.NaN)
+                if (OEE != OEE)
                 {
                     OEE = 0;
                 }
                 _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
-
         }
-        public void SetForeverData()
+        public void SetDailyData()
         {
             using (var context = new EntityFramework.MachineData())
             {
                 var query = context.MachineDatas
                                    .OrderByDescending(p => p.Id)
-                                   .Where(p => p.Timestamp > DateTime.UtcNow.AddHours(-1))
+                                   .Where(p => p.Timestamp >= DateTime.UtcNow.AddDays(-1))
                                    .ToList();
                 int TotalFailureProcent;
+                query.RemoveAll(x => x.Break == true);
 
                 var Machinedatas = new MQTTMachineData();
 
                 Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
                 Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
-                Machinedatas.IdealCyclus = query.Sum(p => p.IdealCyclus);
-
+                var GoodData = query.Where(s => s.Failure == false);
+                Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
                 int FailureTrue = query.Where(c => c.Failure == true).Count();
-                int FailureFalse = query.Where(c => c.Failure == false).Count();
+                int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
                 float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
-                if (FailureTrue == 0)
-                {
-                    Beschikbaarheid = 1;
-                }
-                else if (FailureFalse == 0)
+       
+                float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
+                float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
+                float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
+
+                //DashboardHub.SendRealtimeData(Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+                Beschikbaarheid = Beschikbaarheid * 100;
+                Prestaties = Prestaties * 100;
+                Kwaliteit = Kwaliteit * 100;
+                OEE = OEE * 100;
+
+                if (Beschikbaarheid != Beschikbaarheid)
                 {
                     Beschikbaarheid = 0;
                 }
+                if (Prestaties != Prestaties)
+                {
+                    Prestaties = 0;
+                }
+                if (Kwaliteit != Kwaliteit)
+                {
+                    Kwaliteit = 0;
+                }
+                if (OEE != OEE)
+                {
+                    OEE = 0;
+                }
+                _hubContext.Clients.All.SendAsync("DailyData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+            }
+        }
+
+        public void SetMaandelijksData()
+        {
+            using (var context = new EntityFramework.MachineData())
+            {
+                var query = context.MachineDatas
+                                   .OrderByDescending(p => p.Id)
+                                   .Where(p => p.Timestamp >= DateTime.UtcNow.AddMonths(-1))
+                                   .ToList();
+                int TotalFailureProcent;
+                query.RemoveAll(x => x.Break == true);
+
+                var Machinedatas = new MQTTMachineData();
+
+                Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
+                Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
+                var GoodData = query.Where(s => s.Failure == false);
+                Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
+                int FailureTrue = query.Where(c => c.Failure == true).Count();
+                int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
+
+                float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
 
                 float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
                 float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
@@ -189,23 +225,23 @@ namespace SimmeMqqt.Services
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
 
-                if (Beschikbaarheid == float.NaN)
+                if (Beschikbaarheid != Beschikbaarheid)
                 {
                     Beschikbaarheid = 0;
                 }
-                if (Prestaties == float.NaN)
+                if (Prestaties != Prestaties)
                 {
                     Prestaties = 0;
                 }
-                if (Kwaliteit == float.NaN)
+                if (Kwaliteit != Kwaliteit)
                 {
                     Kwaliteit = 0;
                 }
-                if (OEE == float.NaN)
+                if (OEE != OEE)
                 {
                     OEE = 0;
                 }
-                _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+                _hubContext.Clients.All.SendAsync("MaandelijksData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
             }
         }
     }

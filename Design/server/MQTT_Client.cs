@@ -110,10 +110,17 @@ namespace SimmeMqqt
         public void AddSQLData(MQTTMachineData data)
         {
             var EFMachineData = new MQTTMachineData();
-            EFMachineData = data;
+            EFMachineData.Break = data.Break;
+            EFMachineData.Failure = data.Failure;
+            EFMachineData.MachineID = data.MachineID;
+            EFMachineData.MachineName = data.MachineName;
+            EFMachineData.TotalGoodProduction = data.TotalGoodProduction;
+            EFMachineData.TotalProduction = data.TotalProduction;
+            EFMachineData.IdealCyclus = data.IdealCyclus;
+            EFMachineData.Timestamp = data.Timestamp;
             using (var context = new MachineData())
             {
-                var Data = data;
+                var Data = EFMachineData;
 
                 context.Add(EFMachineData);
                 context.SaveChangesAsync();

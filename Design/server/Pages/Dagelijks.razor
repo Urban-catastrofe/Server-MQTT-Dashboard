@@ -1,25 +1,29 @@
 ﻿@page "/dagelijks"
 @layout MainLayout
-@inherits SimmeMqqt.Pages.DagelijksComponent
-
+@inherits SimmeMqqt.Pages.RealtimeComponent
+@inject HttpClient Http;
+@inject NavigationManager NavigationManager
 @using Radzen
 @using Radzen.Blazor
+@using SimmeMqqt.Controllers
+@using Microsoft.Extensions.DependencyInjection;
+@using Microsoft.AspNetCore.SignalR.Client
 <RadzenContent Container="main">
   <ChildContent>
-    <RadzenHeading Size="H1" Text="Dagelijks">
+    <RadzenHeading Size="H1" Text="Dagelijk">
     </RadzenHeading>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Beschikbaarheid                                                 ">
     </RadzenHeading>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Prestaties                                         ">
     </RadzenHeading>
-    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px">
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" Beschikbaarheid="50">
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="50">
+            <RadzenRadialGaugeScalePointer Value="@Beschikbaarheid">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>km/h</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -41,7 +45,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="@Prestaties">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -65,7 +74,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="@Kwaliteit">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -85,7 +99,12 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="40">
+            <RadzenRadialGaugeScalePointer Value="@OEE">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
             </RadzenRadialGaugeScalePointer>
             <RadzenRadialGaugeScaleRange>
             </RadzenRadialGaugeScaleRange>
@@ -103,3 +122,37 @@
     </RadzenRadialGauge>
   </ChildContent>
 </RadzenContent>
+
+@code {
+    private float Beschikbaarheid;
+    private float Prestaties;
+    private float Kwaliteit;
+    private float OEE;
+
+    private HubConnection hubConnection;
+
+    protected async override Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<float,float,float,float>("DailyData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE) =>
+           {
+               SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE);
+           });
+
+        await hubConnection.StartAsync();
+    }
+
+    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE)
+    {
+        Beschikbaarheid = beschikbaarheid;
+        Prestaties = prestaties;
+        Kwaliteit = kwaliteit;
+        OEE = oEE;
+
+        this.Reload();
+    }
+}
