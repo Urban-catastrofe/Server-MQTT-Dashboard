@@ -17,7 +17,7 @@ namespace SimmeMqqt.EntityFramework
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var ConnectionString = "server=sql11.freesqldatabase.com;port=3306;database=sql11480795;User=sql11480795;Password=sXWQ4MEyxW;";
+            var ConnectionString = "server=gcmsi.nl;port=3306;database=simmebuiting_DatabaseServerMqtt;User=simmebuiting_DatabaseServerMqtt;Password=Geheim04;";
             var ServerVersion = MySqlServerVersion.AutoDetect(ConnectionString);
             optionsBuilder.UseMySql(ConnectionString, ServerVersion);
         }
