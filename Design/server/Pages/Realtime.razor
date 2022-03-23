@@ -2,11 +2,12 @@
 @layout MainLayout
 @inherits SimmeMqqt.Pages.RealtimeComponent
 @inject HttpClient Http;
-
+@inject NavigationManager NavigationManager
 @using Radzen
 @using Radzen.Blazor
 @using SimmeMqqt.Controllers
-
+@using Microsoft.Extensions.DependencyInjection;
+@using Microsoft.AspNetCore.SignalR.Client
 <RadzenContent Container="main">
   <ChildContent>
     <RadzenHeading Size="H1" Text="Realtime">
@@ -19,10 +20,10 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="Beschikbaarheid">
+            <RadzenRadialGaugeScalePointer Value="@Beschikbaarheid">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -44,10 +45,10 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="Prestaties">
+            <RadzenRadialGaugeScalePointer Value="@Prestaties">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -73,10 +74,10 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="Kwaliteit">
+            <RadzenRadialGaugeScalePointer Value="@Kwaliteit">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -98,10 +99,10 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="OEE">
+            <RadzenRadialGaugeScalePointer Value="@OEE">
               <Template Context="data">
               <h4>
-                 @data.Value <sup>%</sup>
+                 @data.Value.ToString("0.00") <sup>%</sup>
               </h4>
               </Template>
             </RadzenRadialGaugeScalePointer>
@@ -121,23 +122,36 @@
     </RadzenRadialGauge>
   </ChildContent>
 </RadzenContent>
-
 @code {
-    double Beschikbaarheid = 0;
-    double Prestaties = 0;
-    double Kwaliteit = 0;
-    double OEE = 0;
+    private float Beschikbaarheid;
+    private float Prestaties;
+    private float Kwaliteit;
+    private float OEE;
 
-    public void SetDataRealtime(double beschikbaarheid, double prestaties, double kwaliteit, double oEE)
-    {
-        Beschikbaarheid = beschikbaarheid * 100;
-        Prestaties = prestaties * 100;
-        Kwaliteit = kwaliteit * 100;
-        OEE = oEE * 100;
-    }
+    private HubConnection hubConnection;
 
     protected async override Task OnInitializedAsync()
     {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+            .WithAutomaticReconnect()
+            .Build();
 
+        hubConnection.On<float,float,float,float>("RealtimeData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE) =>
+           {
+               SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE);
+           });
+
+        await hubConnection.StartAsync();
+    }
+
+    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE)
+    {
+        Beschikbaarheid = beschikbaarheid;
+        Prestaties = prestaties;
+        Kwaliteit = kwaliteit;
+        OEE = oEE;
+
+        this.Reload();
     }
 }

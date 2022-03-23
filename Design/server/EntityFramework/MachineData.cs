@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SimmeMqqt.Model;
+using Pomelo;
+using System.Data;
+using System.Configuration;
+using MySql.Data.MySqlClient;
 
 namespace SimmeMqqt.EntityFramework
 {
@@ -13,7 +17,9 @@ namespace SimmeMqqt.EntityFramework
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TestDatabase;Trusted_Connection=True;");
+            var ConnectionString = "server=sql11.freesqldatabase.com;port=3306;database=sql11480795;User=sql11480795;Password=sXWQ4MEyxW;";
+            var ServerVersion = MySqlServerVersion.AutoDetect(ConnectionString);
+            optionsBuilder.UseMySql(ConnectionString, ServerVersion);
         }
     }
 }

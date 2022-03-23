@@ -23,6 +23,8 @@ using SimmeMqqt.Hubs;
 using Radzen;
 using Microsoft.EntityFrameworkCore.Storage;
 using SimmeMqqt.EntityFramework;
+using SimmeMqqt.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SimmeMqqt
 {
@@ -54,8 +56,12 @@ namespace SimmeMqqt
                 BaseAddress = new Uri(uriHelper.BaseUri)
               };
             });
+            services.AddSingleton<DashboardService>();
+            services.AddSingleton<DashboardHub>();
+            services.AddSingleton<MQTT_Client>();
 
             services.AddHttpClient();
+            services.AddSignalR();
 
             services.AddRazorPages();
             services.AddServerSideBlazor().AddHubOptions(o =>
@@ -69,7 +75,8 @@ namespace SimmeMqqt
             services.AddScoped<ContextMenuService>();
 
             //services.AddDbContext<MachineData>(options =>
-            //   options.UseSqlServer(Configuration.GetConnectionString("Database")));
+            //           options.UseMySql("Data Source=sql11.freesqldatabase.com;port=3306;Initial Catalog=sql11480795;User=sql11480795;Password=sXWQ4MEyxW;",
+            //    new MySqlServerVersion(new Version(7, 0, 33))));
 
             OnConfigureServices(services);
         }
@@ -79,6 +86,10 @@ namespace SimmeMqqt
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var myClass = app.ApplicationServices.GetService<DashboardService>();
+
+            var myClass2 = app.ApplicationServices.GetService<MQTT_Client>();
+
             OnConfiguring(app, env);
             if (env.IsDevelopment())
             {
