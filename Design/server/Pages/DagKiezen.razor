@@ -1,4 +1,4 @@
-﻿@page "/uurlijk"
+﻿@page "/dag-kiezen"
 @layout MainLayout
 @inherits SimmeMqqt.Pages.RealtimeComponent
 @inject HttpClient Http;
@@ -10,21 +10,22 @@
 @using Microsoft.AspNetCore.SignalR.Client
 <RadzenContent Container="main">
   <ChildContent>
-    <RadzenHeading Size="H1" Text="Uurlijk">
+    <RadzenHeading Size="H1" Text="Dag kiezen">
     </RadzenHeading>
                       <RadzenCard class="m-3" style="height: 109px; margin-left: 125px; padding-left: 250px; width: 750px">
                 <h3 class="h5">Extra Informatie</h3>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="width:400px">
                         <div>Pauze</div>
-                        <b>Min pauze: @Pauze</b>
+                        <b>Pauze min: @Pauze</b>
                     </div>
                     <div class="col-md-8">
                         <div>Storing</div>
-                        <b>Min storing: @Failure</b>
+                        <b>Storing min: @Failure</b>
                     </div>
                 </div>
             </RadzenCard>
+            <RadzenDatePicker @bind-Value=@value DateFormat="d" Change=@OnChange/>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Beschikbaarheid                                                 ">
     </RadzenHeading>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Prestaties                                         ">
@@ -135,7 +136,6 @@
     </RadzenRadialGauge>
   </ChildContent>
 </RadzenContent>
-
 @code {
     private float Beschikbaarheid;
     private float Prestaties;
@@ -143,6 +143,7 @@
     private float OEE;
     private int Pauze;
     private int Failure;
+    DateTime? value = DateTime.Today;
 
     private HubConnection hubConnection;
 
@@ -153,10 +154,10 @@
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On<float,float,float,float,int,int>("UurlijkData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure) =>
-                     {
-                         SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure);
-                     });
+        hubConnection.On<float,float,float,float,int,int>("DagKiezen", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure) =>
+                          {
+                              SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure);
+                          });
         await hubConnection.StartAsync();
     }
 
@@ -170,6 +171,12 @@
         Failure = failure;
 
         this.Reload();
+    }
+
+    void OnChange(DateTime? value)
+    {
+        Console.WriteLine($"Value changed to {value}");
+        hubConnection.SendAsync("DateGekozen", value);
     }
 }
 
