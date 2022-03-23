@@ -4411,7 +4411,7 @@ input {
   transition: all .1s linear; }
 
 @media (max-width: 768px) {
-  .rz-sidebar {
+  .rz-sidebar-responsive {
     width: 0;
     opacity: 0; } }
 
@@ -4649,7 +4649,7 @@ input {
     margin: 0;
     min-width: 100%;
     box-shadow: 0 10px 8px 0 rgba(58, 71, 77, 0.06);
-    z-index: 2;
+    z-index: 3;
     border-radius: 2px;
     background-color: #5d717b; }
     .rz-menu:not(.rz-profile-menu) .rz-navigation-menu .rz-navigation-item-wrapper .rz-navigation-item-link {
@@ -4812,7 +4812,7 @@ ul.rz-profile-menu {
   background-color: #5d717b;
   border-left: 1px solid #435863;
   position: relative;
-  z-index: 2; }
+  z-index: 3; }
   ul.rz-profile-menu .rz-navigation-item-icon-children {
     color: #ffffff; }
   ul.rz-profile-menu .rz-navigation-menu {

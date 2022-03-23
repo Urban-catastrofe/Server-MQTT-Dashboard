@@ -46,6 +46,7 @@ namespace SimmeMqqt.Services
                                    .OrderByDescending(p => p.Id)
                                    .FirstOrDefault();
                 int TotalFailureProcent;
+                int TotalBreakTime;
                 if (query.Failure == true)
                 {
                     TotalFailureProcent = 0;
@@ -53,6 +54,14 @@ namespace SimmeMqqt.Services
                 else
                 {
                     TotalFailureProcent = 1;
+                }
+                if (query.Break == true)
+                {
+                    TotalBreakTime = 0;
+                }
+                else
+                {
+                    TotalBreakTime = 1;
                 }
 
                 float Beschikbaarheid = TotalFailureProcent;
@@ -87,7 +96,7 @@ namespace SimmeMqqt.Services
                 {
                     OEE = 0;
                 }
-                _hubContext.Clients.All.SendAsync("RealtimeData", Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+                _hubContext.Clients.All.SendAsync("RealtimeData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, TotalBreakTime, TotalFailureProcent);
             }
         }
         public void SetUurlijkData()
@@ -111,7 +120,10 @@ namespace SimmeMqqt.Services
                 int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
                 float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
-
+                if (FailureTrue == 0)
+                {
+                    Beschikbaarheid = 1;
+                }
                 float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
                 float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
                 float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
@@ -162,7 +174,11 @@ namespace SimmeMqqt.Services
                 int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
                 float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
-       
+                if (FailureTrue == 0)
+                {
+                    Beschikbaarheid = 1;
+                }
+
                 float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
                 float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
                 float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
@@ -214,6 +230,10 @@ namespace SimmeMqqt.Services
                 int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
                 float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
+                if(FailureTrue == 0)
+                {
+                    Beschikbaarheid = 1;
+                }
 
                 float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
                 float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);

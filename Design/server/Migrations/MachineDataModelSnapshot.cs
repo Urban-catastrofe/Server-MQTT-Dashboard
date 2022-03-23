@@ -41,7 +41,7 @@ namespace SimmeMqqt.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TotalGoodProduction")
                         .HasColumnType("int");

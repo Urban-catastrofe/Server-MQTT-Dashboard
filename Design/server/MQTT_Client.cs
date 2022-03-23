@@ -123,7 +123,7 @@ namespace SimmeMqqt
                 var Data = EFMachineData;
 
                 context.Add(EFMachineData);
-                context.SaveChangesAsync();
+                context.SaveChanges();
             }
         }
     }
