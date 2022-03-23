@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Client;
 using SimmeMqqt.Controllers;
 using SimmeMqqt.Hubs;
 using SimmeMqqt.Model;
@@ -13,6 +15,7 @@ namespace SimmeMqqt.Services
     {
         public readonly IHubContext<DashboardHub> _hubContext;
         public Timer aTimer;
+        private HubConnection hubConnection;
         public DashboardService(IHubContext<DashboardHub> hubContext)
         {
             Console.WriteLine("helphub");
@@ -71,7 +74,7 @@ namespace SimmeMqqt.Services
                 float Prestaties = ((float)query.TotalProduction / (float)query.IdealCyclus);
                 float Kwaliteit = ((float)query.TotalGoodProduction / (float)query.TotalProduction);
                 float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
-                if(query.Failure == true)
+                if (query.Failure == true)
                 {
                     Kwaliteit = 1;
                     Prestaties = 0;
@@ -83,7 +86,7 @@ namespace SimmeMqqt.Services
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
 
-                if(Beschikbaarheid != Beschikbaarheid)
+                if (Beschikbaarheid != Beschikbaarheid)
                 {
                     Beschikbaarheid = 0;
                 }
@@ -270,6 +273,19 @@ namespace SimmeMqqt.Services
                 }
                 _hubContext.Clients.All.SendAsync("MaandelijksData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue);
             }
+        }
+        public async Task GetData()
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+                .WithAutomaticReconnect()
+                .Build();
+
+            hubConnection.On<DateTime>("DateGekozen", (Tijd) =>
+            {
+
+            });
+            await hubConnection.StartAsync();
         }
     }
 }
