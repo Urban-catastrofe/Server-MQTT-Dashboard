@@ -13,7 +13,8 @@ jobs:
           uses: actions/setup-dotnet@v2.0.0
 
         # Generate the website
-        - run: dotnet publish -c Release -o release Design/server/SimmeMqqt.csproj
+        - name: Publish
+          run: dotnet publish Design/server/SimmeMqqt.csproj --configuration Release
 
         # Publish the website
         - name: GitHub Pages action
