@@ -11,8 +11,8 @@ using SimmeMqqt.EntityFramework;
 namespace SimmeMqqt.Migrations
 {
     [DbContext(typeof(MachineData))]
-    [Migration("20220322160937_Initial")]
-    partial class Initial
+    [Migration("20220323091707_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,7 +43,7 @@ namespace SimmeMqqt.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("TotalGoodProduction")
                         .HasColumnType("int");
