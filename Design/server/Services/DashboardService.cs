@@ -274,19 +274,19 @@ namespace SimmeMqqt.Services
                 _hubContext.Clients.All.SendAsync("MaandelijksData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue);
             }
         }
-        public async Task GetData()
-        {
-            hubConnection = new HubConnectionBuilder()
-                .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
-                .WithAutomaticReconnect()
-                .Build();
+        //public async Task GetData()
+        //{
+        //    hubConnection = new HubConnectionBuilder()
+        //        .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+        //        .WithAutomaticReconnect()
+        //        .Build();
 
-            hubConnection.On<DateTime>("DateGekozen", (Tijd) =>
-            {
+        //    hubConnection.On<DateTime>("DateGekozen", (Tijd) =>
+        //    {
 
-            });
-            await hubConnection.StartAsync();
-        }
+        //    });
+        //    await hubConnection.StartAsync();
+        //}
     }
 }
 
