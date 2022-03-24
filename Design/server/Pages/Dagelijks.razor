@@ -12,6 +12,19 @@
   <ChildContent>
     <RadzenHeading Size="H1" Text="Dagelijk">
     </RadzenHeading>
+                      <RadzenCard class="m-3" style="height: 109px; margin-left: 125px; padding-left: 250px; width: 750px">
+                <h3 class="h5">Extra Informatie</h3>
+                <div class="row">
+                    <div class="col-md-4" style="width:400px">
+                        <div>Pauze</div>
+                        <b>Min pauze: @Pauze</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Storing</div>
+                        <b>Min storing: @Failure</b>
+                    </div>
+                </div>
+            </RadzenCard>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Beschikbaarheid                                                 ">
     </RadzenHeading>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Prestaties                                         ">
@@ -128,6 +141,8 @@
     private float Prestaties;
     private float Kwaliteit;
     private float OEE;
+    private int Pauze;
+    private int Failure;
 
     private HubConnection hubConnection;
 
@@ -138,21 +153,23 @@
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On<float,float,float,float>("DailyData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE) =>
-           {
-               SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE);
-           });
-
+        hubConnection.On<float,float,float,float,int,int>("DailyData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure) =>
+                     {
+                         SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure);
+                     });
         await hubConnection.StartAsync();
     }
 
-    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE)
+    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE, int pauze,int failure)
     {
         Beschikbaarheid = beschikbaarheid;
         Prestaties = prestaties;
         Kwaliteit = kwaliteit;
         OEE = oEE;
+        Pauze = pauze;
+        Failure = failure;
 
         this.Reload();
     }
 }
+
