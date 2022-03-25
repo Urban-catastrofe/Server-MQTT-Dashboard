@@ -115,6 +115,7 @@ namespace SimmeMqqt.Services
                                    .ToList();
 
                 int QueryBreak = query.Where(c => c.Break == true).Count();
+                var Data = query;
                 query.RemoveAll(x => x.Break == true);
 
                 var Machinedatas = new MQTTMachineData();
@@ -141,6 +142,48 @@ namespace SimmeMqqt.Services
                 Prestaties = Prestaties * 100;
                 Kwaliteit = Kwaliteit * 100;
                 OEE = OEE * 100;
+                var PauzeCurrent = 0;
+                var FailureCurrent = 0;
+                var id = 0;
+                var Bool = true;
+                try
+                {
+                    while (Bool == true)
+                    {
+                        var Condition = query[id];
+
+                        if (Condition.Failure == false)
+                        {
+                            FailureCurrent = id;
+                            Bool = false;
+                        }
+                        else
+                        {
+                            id++;
+                        }
+                    }
+
+                    id = 0;
+                    Bool = true;
+
+                    while (Bool == true)
+                    {
+                        var Condition = Data[id];
+
+                        if (Condition.Break == false)
+                        {
+                            PauzeCurrent = id;
+                            Bool = false;
+                        }
+                        else
+                        {
+                            id++;
+                        }
+                    }
+                }catch (Exception e)
+                {
+                   
+                }
 
                 if (Beschikbaarheid != Beschikbaarheid)
                 {
@@ -158,7 +201,7 @@ namespace SimmeMqqt.Services
                 {
                     OEE = 0;
                 }
-                _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue);
+                _hubContext.Clients.All.SendAsync("UurlijkData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, PauzeCurrent, FailureCurrent);
             }
         }
         public void SetDailyData()
@@ -214,7 +257,7 @@ namespace SimmeMqqt.Services
                 {
                     OEE = 0;
                 }
-                _hubContext.Clients.All.SendAsync("DailyData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue);
+                _hubContext.Clients.All.SendAsync("DailyData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, Machinedatas);
             }
         }
 
@@ -271,7 +314,7 @@ namespace SimmeMqqt.Services
                 {
                     OEE = 0;
                 }
-                _hubContext.Clients.All.SendAsync("MaandelijksData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue);
+                _hubContext.Clients.All.SendAsync("MaandelijksData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, Machinedatas);
             }
         }
         //public async Task GetData()

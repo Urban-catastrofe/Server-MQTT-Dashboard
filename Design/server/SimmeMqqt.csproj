@@ -2,9 +2,16 @@
   <PropertyGroup>
     <NoWarn>CS0168,CS1998,BL9993,CS0649,CS0436,0436</NoWarn>
     <TargetFramework>net6.0</TargetFramework>
+	  <RuntimeIdentifier>win10-x86</RuntimeIdentifier>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+	<PropertyGroup>
+		<PublishTrimmed>false</PublishTrimmed>
+	</PropertyGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>

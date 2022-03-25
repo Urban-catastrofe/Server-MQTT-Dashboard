@@ -12,16 +12,27 @@
   <ChildContent>
     <RadzenHeading Size="H1" Text="Uurlijk">
     </RadzenHeading>
-                      <RadzenCard class="m-3" style="height: 109px; margin-left: 125px; padding-left: 250px; width: 750px">
+                      <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
                 <h3 class="h5">Extra Informatie</h3>
-                <div class="row">
+                 <div class="row">
                     <div class="col-md-4">
-                        <div>Pauze</div>
+                        <div>Totale uurlijke minuten pauze</div>
                         <b>Min pauze: @Pauze</b>
                     </div>
                     <div class="col-md-8">
-                        <div>Storing</div>
+                        <div>Totale uurlijke minuten storing</div>
                         <b>Min storing: @Failure</b>
+                    </div>
+                 </div>
+                 <br />
+                 <div class="row">
+                      <div class="col-md-4">
+                        <div>Huidige Pauze</div>
+                        <b>Min pauze: @PauzeCurrent</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Huidige Storing</div>
+                        <b>Min storing: @FailureCurrent</b>
                     </div>
                 </div>
             </RadzenCard>
@@ -143,6 +154,8 @@
     private float OEE;
     private int Pauze;
     private int Failure;
+    private int FailureCurrent;
+    private int PauzeCurrent;
 
     private HubConnection hubConnection;
 
@@ -152,15 +165,15 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
             .WithAutomaticReconnect()
             .Build();
-
-        hubConnection.On<float,float,float,float,int,int>("UurlijkData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure) =>
-                     {
-                         SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure);
-                     });
+     
+        hubConnection.On<float,float,float,float,int,int,int,int>("UurlijkData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,PauzeCurrent,FailureCurrent) =>
+                                   {
+                                       SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure,PauzeCurrent,FailureCurrent);
+                                   });
         await hubConnection.StartAsync();
     }
 
-    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE, int pauze,int failure)
+    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE, int pauze, int failure, int pauzeCurrent, int failureCurrent)
     {
         Beschikbaarheid = beschikbaarheid;
         Prestaties = prestaties;
@@ -168,6 +181,8 @@
         OEE = oEE;
         Pauze = pauze;
         Failure = failure;
+        PauzeCurrent = pauzeCurrent;
+        FailureCurrent = failureCurrent;
 
         this.Reload();
     }

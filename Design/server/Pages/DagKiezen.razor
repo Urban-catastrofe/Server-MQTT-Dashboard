@@ -8,20 +8,32 @@
 @using SimmeMqqt.Controllers
 @using Microsoft.Extensions.DependencyInjection;
 @using Microsoft.AspNetCore.SignalR.Client
+@using SimmeMqqt.Model
 <RadzenContent Container="main">
   <ChildContent>
     <RadzenHeading Size="H1" Text="Dag kiezen">
     </RadzenHeading>
-                      <RadzenCard class="m-3" style="height: 109px; margin-left: 125px; padding-left: 250px; width: 750px">
+                     <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
                 <h3 class="h5">Extra Informatie</h3>
                 <div class="row">
-                    <div class="col-md-4" style="width:400px">
-                        <div>Pauze</div>
-                        <b>Pauze min: @Pauze</b>
+                    <div class="col-md-4">
+                        <div>Totale dagelijkse minuten pauze</div>
+                        <b>Min pauze: @pauze</b>
                     </div>
                     <div class="col-md-8">
-                        <div>Storing</div>
-                        <b>Storing min: @Failure</b>
+                        <div>Totale dagelijkse minuten storing</div>
+                        <b>Min storing: @failure</b>
+                    </div>
+                 </div>
+                 <br />
+                 <div class="row">
+                      <div class="col-md-4">
+                        <div>Totale dagelijkse productie</div>
+                        <b>Productie: @totalGoodProduction</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Totale dagelijkse fouten</div>
+                        <b>Fouten: @production</b>
                     </div>
                 </div>
             </RadzenCard>
@@ -34,7 +46,7 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="@Beschikbaarheid">
+            <RadzenRadialGaugeScalePointer Value="@beschikbaarheid">
               <Template Context="data">
               <h4>
                  @data.Value.ToString("0.00") <sup>%</sup>
@@ -59,7 +71,7 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="@Prestaties">
+            <RadzenRadialGaugeScalePointer Value="@prestaties">
               <Template Context="data">
               <h4>
                  @data.Value.ToString("0.00") <sup>%</sup>
@@ -88,7 +100,7 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="@Kwaliteit">
+            <RadzenRadialGaugeScalePointer Value="@kwaliteit">
               <Template Context="data">
               <h4>
                  @data.Value.ToString("0.00") <sup>%</sup>
@@ -113,7 +125,7 @@
       <ChildContent>
         <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
           <ChildContent>
-            <RadzenRadialGaugeScalePointer Value="@OEE">
+            <RadzenRadialGaugeScalePointer Value="@oEE">
               <Template Context="data">
               <h4>
                  @data.Value.ToString("0.00") <sup>%</sup>
@@ -137,46 +149,84 @@
   </ChildContent>
 </RadzenContent>
 @code {
-    private float Beschikbaarheid;
-    private float Prestaties;
-    private float Kwaliteit;
-    private float OEE;
-    private int Pauze;
-    private int Failure;
-    DateTime? value = DateTime.Today;
+    private float beschikbaarheid;
+    private float prestaties;
+    private float kwaliteit;
+    private float oEE;
+    private int pauze;
+    private int failure;
+    private int totalGoodProduction;
+    private int production;
+    DateTime value = DateTime.Today;
 
     private HubConnection hubConnection;
 
-    protected async override Task OnInitializedAsync()
-    {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
-            .WithAutomaticReconnect()
-            .Build();
-
-        hubConnection.On<float,float,float,float,int,int>("DagKiezen", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure) =>
-                          {
-                              SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure);
-                          });
-        await hubConnection.StartAsync();
-    }
-
-    public void SetDataRealtime(float beschikbaarheid, float prestaties, float kwaliteit, float oEE, int pauze,int failure)
-    {
-        Beschikbaarheid = beschikbaarheid;
-        Prestaties = prestaties;
-        Kwaliteit = kwaliteit;
-        OEE = oEE;
-        Pauze = pauze;
-        Failure = failure;
-
-        this.Reload();
-    }
-
-    void OnChange(DateTime? value)
+    void OnChange()
     {
         Console.WriteLine($"Value changed to {value}");
-        hubConnection.SendAsync("DateGekozen", value);
+        using (var context = new EntityFramework.MachineData())
+        {
+            var value1 = value;
+            var query = context.MachineDatas
+                               .OrderByDescending(p => p.Id)
+                               .Where(p => p.Timestamp >= value && p.Timestamp <= value1.AddDays(1))
+                               .ToList();
+            int QueryBreak = query.Where(c => c.Break == true).Count();
+            query.RemoveAll(x => x.Break == true);
+
+            var Machinedatas = new MQTTMachineData();
+
+            Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
+            Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
+            var GoodData = query.Where(s => s.Failure == false);
+            Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
+            int FailureTrue = query.Where(c => c.Failure == true).Count();
+            int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
+
+            float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
+            Beschikbaarheid = 1 - Beschikbaarheid;
+            if (FailureTrue == 0)
+            {
+                Beschikbaarheid = 1;
+            }
+
+            float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
+            float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
+            float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
+
+            //DashboardHub.SendRealtimeData(Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+            Beschikbaarheid = Beschikbaarheid * 100;
+            Prestaties = Prestaties * 100;
+            Kwaliteit = Kwaliteit * 100;
+            OEE = OEE * 100;
+
+            if (Beschikbaarheid != Beschikbaarheid)
+            {
+                Beschikbaarheid = 0;
+            }
+            if (Prestaties != Prestaties)
+            {
+                Prestaties = 0;
+            }
+            if (Kwaliteit != Kwaliteit)
+            {
+                Kwaliteit = 0;
+            }
+            if (OEE != OEE)
+            {
+                OEE = 0;
+            }
+
+            beschikbaarheid = Beschikbaarheid;
+            prestaties = Prestaties;
+            kwaliteit = Kwaliteit;
+            oEE = OEE;
+            pauze = QueryBreak;
+            failure = FailureTrue;
+            totalGoodProduction = Machinedatas.TotalProduction;
+            production = Machinedatas.TotalProduction - Machinedatas.TotalGoodProduction;
+
+        }
     }
 }
 
