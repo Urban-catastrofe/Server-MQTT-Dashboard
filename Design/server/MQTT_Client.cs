@@ -84,6 +84,7 @@ namespace SimmeMqqt
                         Console.WriteLine("### SUBSCRIBED ###");
                     });
                     await mqttClient.ConnectAsync(options, cts.Token);
+                    await mqttClient.ReconnectAsync();
                     // UNCOMMENT AND YOU WILL RECEIVE A MESSAGE Task.Run(() => mqttClient.PublishAsync("MyClientIDHere/Device_2/Instance_1","met=Temperature~data=29"));
 
                 }
