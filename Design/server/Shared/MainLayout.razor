@@ -1,7 +1,9 @@
 ﻿@inherits SimmeMqqt.Layouts.MainLayoutComponent
+@inject NavigationManager NavigationManager
 
 @using Radzen
 @using Radzen.Blazor
+@using Microsoft.AspNetCore.SignalR.Client
 <RadzenDialog />
 <RadzenNotification />
 <RadzenTooltip />
@@ -60,3 +62,35 @@
     </RadzenFooter>
   </ChildContent>
 </RadzenLayout>
+@code{
+    private HubConnection hubConnection;
+
+    protected async override Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<float,float,float,float,int,int,int,int>("UurlijkData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,PauzeCurrent,FailureCurrent) =>
+                                                        {
+                                                            Notification(FailureCurrent);
+                                                        });
+        await hubConnection.StartAsync();        
+    }
+
+    private void Notification(int FailureCurrent)
+    {
+        if(FailureCurrent >= 5)
+        {
+            ShowNotification(new NotificationMessage { Style = "position: absolute; left: -1000px;", Severity = NotificationSeverity.Error, Summary = "Storing langer dan 5 min", Detail = "Success Detail", Duration = 40000 });
+        }
+        
+    }
+
+    
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}
