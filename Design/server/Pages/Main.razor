@@ -18,7 +18,7 @@
                 <RadzenChart>
                     <RadzenAreaSeries Smooth="@smooth" Data="@TotalUsable" CategoryProperty="Timestamp" Title="Goede producctie" LineType="LineType.Dashed" ValueProperty="TotalGoodProduction">
                     </RadzenAreaSeries>
-                    <RadzenCategoryAxis Padding="20" FormatString="{0:HH}" />
+                    <RadzenCategoryAxis Padding="20" FormatString="{0:HH:MM}" />
                     <RadzenValueAxis Formatter="FormatAsUSD">
                         <RadzenGridLines Visible="true" />
                         <RadzenAxisTitle Text="Aantal geproduceerd" />
@@ -44,7 +44,7 @@
 
     string FormatAsUSD(object value)
     {
-        return "Aantal geproduceerd";
+        return ((double)value).ToString("0");
     }
 
 }
