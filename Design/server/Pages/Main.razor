@@ -5,9 +5,46 @@
 
 @using Radzen
 @using Radzen.Blazor
+@using SimmeMqqt.Model
+@using System.Globalization
 <RadzenContent Container="main">
   <ChildContent>
     <RadzenHeading Size="H1" Text="Main">
     </RadzenHeading>
+                    <RadzenCard Class="w-100 mb-4" >
+                    <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox>
+                    <RadzenLabel Text="Smooth" For="smooth" Style="margin-left: 8px; vertical-align: middle;" />
+                </RadzenCard>
+                <RadzenChart>
+                    <RadzenAreaSeries Smooth="@smooth" Data="@TotalUsable" CategoryProperty="Timestamp" Title="Goede producctie" LineType="LineType.Dashed" ValueProperty="TotalGoodProduction">
+                    </RadzenAreaSeries>
+                    <RadzenCategoryAxis Padding="20" FormatString="{0:HH}" />
+                    <RadzenValueAxis Formatter="FormatAsUSD">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Aantal geproduceerd" />
+                    </RadzenValueAxis>
+                </RadzenChart>
   </ChildContent>
-</RadzenContent>
+</RadzenContent>----------------
+@code{
+
+    public bool smooth = true;
+    private List<MQTTMachineData> TotalUsable;
+    protected async override Task OnInitializedAsync()
+    {
+        using (var context = new EntityFramework.MachineData())
+        {
+            var query = context.MachineDatas
+                           .OrderByDescending(p => p.Id)
+                           .Where(p => p.Timestamp >= DateTime.UtcNow.AddDays(-1))
+                           .ToList();
+            TotalUsable = query;
+        }
+    }
+
+    string FormatAsUSD(object value)
+    {
+        return "Aantal geproduceerd";
+    }
+
+}
