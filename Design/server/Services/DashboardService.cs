@@ -422,7 +422,6 @@ namespace SimmeMqqt.Services
                 {
                     OEE = 0;
                 }
-                Console.Writeline("")
                 _hubContext.Clients.All.SendAsync("foreverData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, Machinedatas);
                 _hubContext.Clients.All.SendAsync("foreverData1", FailureLang, FailureKort, FailureLangMin, FailureKortMin);
             }
