@@ -13,8 +13,7 @@
 		<PublishTrimmed>false</PublishTrimmed>
 	</PropertyGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="C:\Users\Jairo\OneDrive - Graafschap College\DashboardService.cs" Link="DashboardService.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
