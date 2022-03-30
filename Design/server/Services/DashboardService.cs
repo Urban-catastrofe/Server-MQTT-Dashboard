@@ -40,6 +40,7 @@ namespace SimmeMqqt.Services
             SetUurlijkData();
             SetDailyData();
             SetMaandelijksData();
+            SetForeverData();
         }
         public void SetRealtimeData()
         {
@@ -180,9 +181,10 @@ namespace SimmeMqqt.Services
                             id++;
                         }
                     }
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
-                   
+
                 }
 
                 if (Beschikbaarheid != Beschikbaarheid)
@@ -317,19 +319,75 @@ namespace SimmeMqqt.Services
                 _hubContext.Clients.All.SendAsync("MaandelijksData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, Machinedatas);
             }
         }
-        //public async Task GetData()
-        //{
-        //    hubConnection = new HubConnectionBuilder()
-        //        .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
-        //        .WithAutomaticReconnect()
-        //        .Build();
 
-        //    hubConnection.On<DateTime>("DateGekozen", (Tijd) =>
-        //    {
+        public void SetForeverData()
+        {
+            using (var context = new EntityFramework.MachineData())
+            {
+                var query = context.MachineDatas
+                                   .OrderByDescending(p => p.Id)
+                                   .ToList();
+                int QueryBreak = query.Where(c => c.Break == true).Count();
+                query.RemoveAll(x => x.Break == true);
 
-        //    });
-        //    await hubConnection.StartAsync();
-        //}
+                var Machinedatas = new MQTTMachineData();
+
+                Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
+                Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
+                var GoodData = query.Where(s => s.Failure == false);
+                Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
+                int FailureTrue = query.Where(c => c.Failure == true).Count();
+                int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
+
+                float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
+                Beschikbaarheid = 1 - Beschikbaarheid;
+                if (FailureTrue == 0)
+                {
+                    Beschikbaarheid = 1;
+                }
+
+                float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
+                float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
+                float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
+
+                //DashboardHub.SendRealtimeData(Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+                Beschikbaarheid = Beschikbaarheid * 100;
+                Prestaties = Prestaties * 100;
+                Kwaliteit = Kwaliteit * 100;
+                OEE = OEE * 100;
+
+                if (Beschikbaarheid != Beschikbaarheid)
+                {
+                    Beschikbaarheid = 0;
+                }
+                if (Prestaties != Prestaties)
+                {
+                    Prestaties = 0;
+                }
+                if (Kwaliteit != Kwaliteit)
+                {
+                    Kwaliteit = 0;
+                }
+                if (OEE != OEE)
+                {
+                    OEE = 0;
+                }
+                _hubContext.Clients.All.SendAsync("foreverData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, Machinedatas);
+            }
+            //public async Task GetData()
+            //{
+            //    hubConnection = new HubConnectionBuilder()
+            //        .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+            //        .WithAutomaticReconnect()
+            //        .Build();
+
+            //    hubConnection.On<DateTime>("DateGekozen", (Tijd) =>
+            //    {
+
+            //    });
+            //    await hubConnection.StartAsync();
+            //}
+        }
     }
 }
 
