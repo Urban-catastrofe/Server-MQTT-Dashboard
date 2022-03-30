@@ -175,6 +175,13 @@ namespace SimmeMqqt.Services
                         {
                             PauzeCurrent = id;
                             Bool = false;
+                            if(id >= 5)
+                            {
+
+                            } else if (id != 0)
+                            {
+
+                            }
                         }
                         else
                         {
@@ -346,6 +353,49 @@ namespace SimmeMqqt.Services
                     Beschikbaarheid = 1;
                 }
 
+                var FailureKort = 0;
+                var FailureLang = 0;
+                var FailureKortMin = 0;
+                var FailureLangMin = 0;
+                var StoringTrue = 0;
+                var id = 0;
+                var Bool = true;
+
+                while (Bool == true)
+                {
+                    try
+                    {
+                        var Condition = query[id];
+                        if (Condition.Failure == true)
+                        {
+                            id++;
+                            StoringTrue++;
+                        }
+                        else if (Condition.Failure == false)
+                        {
+                            if (StoringTrue >= 5)
+                            {
+                                FailureLang++;
+                                FailureLangMin = FailureLangMin + StoringTrue;
+                                StoringTrue = 0;
+                            }
+                            else if (StoringTrue != 0)
+                            {
+                                FailureKort++;
+                                FailureKortMin = FailureLangMin + StoringTrue;
+                                StoringTrue = 0;
+                            }
+
+                            id++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Bool = false;
+                    }
+                }
+
+
                 float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
                 float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
                 float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
@@ -373,6 +423,7 @@ namespace SimmeMqqt.Services
                     OEE = 0;
                 }
                 _hubContext.Clients.All.SendAsync("foreverData", Beschikbaarheid, Prestaties, Kwaliteit, OEE, QueryBreak, FailureTrue, Machinedatas);
+                _hubContext.Clients.All.SendAsync("foreverData1", FailureLang, FailureKort, FailureLangMin, FailureKortMin);
             }
             //public async Task GetData()
             //{

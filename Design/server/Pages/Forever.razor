@@ -28,6 +28,17 @@
                  <br />
                  <div class="row">
                       <div class="col-md-4">
+                        <div>Totale storing korten dan 5 minuten</div>
+                        <b>Storing: @FailuresKort Min: @FailuresKortMin</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Totale storing langer dan 5 minuten</div>
+                        <b>Storing: @FailuresLang Min: @FailuresLangMin</b>
+                    </div>
+                </div>
+                                 <br />
+                 <div class="row">
+                      <div class="col-md-4">
                         <div>Totale forever productie</div>
                         <b>Productie: @totalGoodProduction</b>
                     </div>
@@ -156,6 +167,11 @@
     private int Failure;
     private int totalGoodProduction;
     private int production;
+    private int FailuresKort;
+    private int FailuresLang;
+    private int FailuresKortMin;
+    private int FailuresLangMin;
+
 
     private HubConnection hubConnection;
 
@@ -167,9 +183,13 @@
             .Build();
 
         hubConnection.On<float,float,float,float,int,int, MQTTMachineData>("foreverData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,MachineData) =>
-                                    {
-                                        SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure,MachineData);
-                                    });
+                                                             {
+                                                                 SetDataRealtime(Beschikbaarheid,Prestaties,Kwaliteit,OEE,Pauze,Failure,MachineData);
+                                                             });
+        hubConnection.On<int,int,int,int>("foreverData1", (FailureLang, FailureKort, FailureLangMin,FailureKortMin) =>
+                                          {
+                                              SetFailures(FailureLang, FailureKort, FailureLangMin, FailureKortMin);
+                                          });
         await hubConnection.StartAsync();
     }
 
@@ -183,9 +203,15 @@
         Failure = failure;
         totalGoodProduction = productionData.TotalProduction;
         production = productionData.TotalProduction - productionData.TotalGoodProduction;
-
         this.Reload();
+    }
 
+    private void SetFailures(int failuresLang, int failuresKort, int failuresLangMin, int failuresKortMin)
+    {
+        FailuresLang = failuresLang;
+        FailuresKort = failuresKort;
+        FailuresLangMin = failuresLangMin;
+        FailuresKortMin = failuresKortMin;
     }
 }
 
