@@ -4,6 +4,7 @@
 @using Radzen
 @using Radzen.Blazor
 @using Microsoft.AspNetCore.SignalR.Client
+@using SimmeMqqt.Model
 <RadzenDialog />
 <RadzenNotification />
 <RadzenTooltip />
@@ -17,7 +18,7 @@
           <div class="col-6 d-flex align-items-center">
             <RadzenSidebarToggle Click="@SidebarToggle0Click">
             </RadzenSidebarToggle>
-            <RadzenLabel Text="JairoAndSimmeMQTT">
+            <RadzenLabel Text="@DataName()">
             </RadzenLabel>
           </div>
           <div class="col-6 text-right">
@@ -64,18 +65,25 @@
 </RadzenLayout>
 @code{
     private HubConnection hubConnection;
-
+    private MQTTMachineData MachineData;
     protected async override Task OnInitializedAsync()
     {
+        using (var context = new EntityFramework.MachineData())
+        {
+            MachineData = context.MachineDatas
+                .OrderByDescending(p => p.Id)
+                .FirstOrDefault();
+        }
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
             .WithAutomaticReconnect()
             .Build();
 
         hubConnection.On<float,float,float,float,int,int,int,int>("UurlijkData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,PauzeCurrent,FailureCurrent) =>
-                                                        {
-                                                            Notification(FailureCurrent);
-                                                        });
+                                                                             {
+                                                                                 Notification(FailureCurrent);
+                                                                             });
         await hubConnection.StartAsync();        
     }
 
@@ -83,9 +91,21 @@
     {
         if(FailureCurrent >= 5)
         {
-            ShowNotification(new NotificationMessage { Style = "position: absolute; left: -1000px;", Severity = NotificationSeverity.Error, Summary = "Storing langer dan 5 min", Detail = "Success Detail", Duration = 40000 });
+            ShowNotification(new NotificationMessage { Style = "position: absolute; left: -1000px;", Severity = NotificationSeverity.Error, Summary = "Storing langer dan 5 min", Detail = "STORING", Duration = 40000 });
         }
-        
+        using (var context = new EntityFramework.MachineData())
+        {
+            MachineData = context.MachineDatas
+                .OrderByDescending(p => p.Id)
+                .FirstOrDefault();
+        }
+
+    }
+
+    private string DataName()
+    {
+        return ("JairoAndSimmeMQTT MachineName: " + MachineData.MachineName + " MachineId: " + 
+        MachineData.MachineID + " LastDataTime: " + MachineData.Timestamp);
     }
 
     
