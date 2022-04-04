@@ -10,7 +10,7 @@ using Radzen.Blazor;
 
 namespace SimmeMqqt.Pages
 {
-    public partial class UurlijkComponent : ComponentBase
+    public partial class TijdStipKiezenComponent : ComponentBase
     {
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, dynamic> Attributes { get; set; }

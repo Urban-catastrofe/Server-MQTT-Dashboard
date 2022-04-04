@@ -7,7 +7,7 @@ using Radzen.Blazor;
 
 namespace SimmeMqqt.Pages
 {
-    public partial class UurlijkComponent
+    public partial class TijdStipKiezen
     {
 
     }
