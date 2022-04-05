@@ -21,6 +21,8 @@
                 <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
                 <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
                 <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMinutes(-1)))" Text="minuten" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMilliseconds(-1)))" Text="millieseconden" Icon="lock"></RadzenMenuItem>
             </RadzenMenuItem>
             </RadzenMenu>
                       <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
