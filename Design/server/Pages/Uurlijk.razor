@@ -184,11 +184,6 @@
         PauzeCurrent = pauzeCurrent;
         FailureCurrent = failureCurrent;
 
-        if(FailureCurrent >= 5)
-        {
-            ShowNotification(new NotificationMessage { Style = "position: absolute; left: -1000px;", Severity = NotificationSeverity.Error, Summary = "Storing langer dan 5 min", Detail = "Success Detail", Duration = 40000 });
-        }
-
         this.Reload();
     }
 

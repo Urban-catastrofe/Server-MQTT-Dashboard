@@ -1,0 +1,374 @@
+﻿@page "/TijdstipKiezen"
+@layout MainLayout
+@inherits SimmeMqqt.Pages.RealtimeComponent
+@inject HttpClient Http;
+@inject NavigationManager NavigationManager
+@using Radzen
+@using Radzen.Blazor
+@using SimmeMqqt.Controllers
+@using Microsoft.Extensions.DependencyInjection;
+@using Microsoft.AspNetCore.SignalR.Client
+@using SimmeMqqt.Model
+@using System.Threading;
+<RadzenContent Container="main">
+  <ChildContent>
+    <RadzenHeading Size="H1" Text="KiesTijd">
+    </RadzenHeading>
+         <RadzenMenu>
+            <RadzenMenuItem Text="Tijdstip" Icon="alarm">
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddHours(-1)))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-1)))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
+            </RadzenMenuItem>
+            </RadzenMenu>
+                      <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
+                <h3 class="h5">Extra Informatie</h3>
+                                 <div class="row">
+                      <div class="col-md-4">
+                        <div>Totale productie</div>
+                        <b>Productie: @totalGoodProduction</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Totale fouten</div>
+                        <b>Fouten: @production</b>
+                    </div>
+                </div>
+                <br />
+                 <div class="row">
+                    <div class="col-md-4">
+                        <div>Totale minuten pauze</div>
+                        <b>Min pauze: @pauze</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Totale minuten storing</div>
+                        <b>Min storing: @failure</b>
+                    </div>
+                 </div>
+                 <br />
+                 <div class="row">
+                      <div class="col-md-4">
+                        <div>Huidige Pauze</div>
+                        <b>Min pauze: @pauzeCurrent</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Huidige Storing</div>
+                        <b>Min storing: @failureCurrent</b>
+                    </div>
+                </div>
+                <br />
+                                 <div class="row">
+                      <div class="col-md-4">
+                        <div>Totale storing korten dan 5 minuten</div>
+                        <b>Storing: @failuresKort Min: @failuresKortMin</b>
+                    </div>
+                    <div class="col-md-8">
+                        <div>Totale storing langer dan 5 minuten</div>
+                        <b>Storing: @failuresLang Min: @failuresLangMin</b>
+                    </div>
+                </div>
+            </RadzenCard>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Beschikbaarheid                                                 ">
+    </RadzenHeading>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Prestaties                                         ">
+    </RadzenHeading>
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" Beschikbaarheid="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" ShowFirstTick="true" ShowLastTick="true" ShowTickLabels="true" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="@beschikbaarheid">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="65">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="65" To="80">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="80" To="90">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="90" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+    <RadzenRadialGauge style="border-radius: 0px; float: none; height: 350px; width: 400px" Prestatie="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="@prestaties">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="75">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="75" To="85">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="85" To="95">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="95" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; width: 152px" Text="Kwaliteit                                              ">
+    </RadzenHeading>
+    <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 525px; margin-right: 0px; margin-top: -30px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="OEE                                    ">
+    </RadzenHeading>
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" Kwaliteit="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="@kwaliteit">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="85">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="85" To="95">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="95" To="99">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="99" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+    <RadzenRadialGauge style="border-radius: 0px; height: 350px; width: 400px" OEE="50">
+      <ChildContent>
+        <RadzenRadialGaugeScale Min="0" Step="10" StrokeWidth="1" TickLabelOffset="20" TickLength="1" TickPosition="GaugeTickPosition.Outside" X="0.5" Y="0.5">
+          <ChildContent>
+            <RadzenRadialGaugeScalePointer Value="@oEE">
+              <Template Context="data">
+              <h4>
+                 @data.Value.ToString("0.00") <sup>%</sup>
+              </h4>
+              </Template>
+            </RadzenRadialGaugeScalePointer>
+            <RadzenRadialGaugeScaleRange>
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="red" From="0" To="41">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="yellow" From="41" To="65">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="green" From="65" To="85">
+            </RadzenRadialGaugeScaleRange>
+            <RadzenRadialGaugeScaleRange Fill="blue" From="85" To="100">
+            </RadzenRadialGaugeScaleRange>
+          </ChildContent>
+        </RadzenRadialGaugeScale>
+      </ChildContent>
+    </RadzenRadialGauge>
+  </ChildContent>
+</RadzenContent>
+
+@code {
+    private float beschikbaarheid;
+    private float prestaties;
+    private float kwaliteit;
+    private float oEE;
+    private int pauze;
+    private int failure;
+    private int failureCurrent;
+    private int pauzeCurrent;
+    private int failuresKort;
+    private int failuresLang;
+    private int failuresKortMin;
+    private int failuresLangMin;
+    private int totalGoodProduction;
+    private int production;
+
+
+    private HubConnection hubConnection;
+
+    protected async override Task OnInitializedAsync()
+    {
+        setdata(DateTime.UtcNow.AddDays(-1));
+    }
+
+    private void OnCLicked(DateTime tijdstip)
+    {
+        setdata(tijdstip);
+    }
+
+    private void setdata(DateTime Date)
+    {
+        using (var context = new EntityFramework.MachineData())
+        {
+            var query = context.MachineDatas
+                               .OrderByDescending(p => p.Id)
+                               .Where(p => p.Timestamp >= Date)
+                               .ToList();
+
+            int QueryBreak = query.Where(c => c.Break == true).Count();
+            var Data = query;
+            query.RemoveAll(x => x.Break == true);
+
+            var Machinedatas = new MQTTMachineData();
+
+            Machinedatas.TotalProduction = query.Sum(p => p.TotalProduction);
+            Machinedatas.TotalGoodProduction = query.Sum(p => p.TotalGoodProduction);
+            var GoodData = query.Where(s => s.Failure == false);
+            Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
+            int FailureTrue = query.Where(c => c.Failure == true).Count();
+            int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
+
+            float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
+            Beschikbaarheid = 1 - Beschikbaarheid;
+            if (FailureTrue == 0)
+            {
+                Beschikbaarheid = 1;
+            }
+            float Prestaties = ((float)Machinedatas.TotalProduction / (float)Machinedatas.IdealCyclus);
+            float Kwaliteit = ((float)Machinedatas.TotalGoodProduction / (float)Machinedatas.TotalProduction);
+            float OEE = ((float)Beschikbaarheid * (float)Prestaties * (float)Kwaliteit);
+
+            //DashboardHub.SendRealtimeData(Beschikbaarheid, Prestaties, Kwaliteit, OEE);
+            Beschikbaarheid = Beschikbaarheid * 100;
+            Prestaties = Prestaties * 100;
+            Kwaliteit = Kwaliteit * 100;
+            OEE = OEE * 100;
+            var PauzeCurrent = 0;
+            var FailureCurrent = 0;
+            var id = 0;
+            var Bool = true;
+            try
+            {
+                while (Bool == true)
+                {
+                    var Condition = query[id];
+
+                    if (Condition.Failure == false)
+                    {
+                        FailureCurrent = id;
+                        Bool = false;
+                    }
+                    else
+                    {
+                        id++;
+                    }
+                }
+
+                id = 0;
+                Bool = true;
+
+                while (Bool == true)
+                {
+                    var Condition = Data[id];
+
+                    if (Condition.Break == false)
+                    {
+                        PauzeCurrent = id;
+                        Bool = false;
+                    }
+                    else
+                    {
+                        id++;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            var FailureKort = 0;
+            var FailureLang = 0;
+            var FailureKortMin = 0;
+            var FailureLangMin = 0;
+            var StoringTrue = 0;
+            id = 0;
+            Bool = true;
+
+            while (Bool == true)
+            {
+                try
+                {
+                    var Condition = query[id];
+                    if (Condition.Failure == true)
+                    {
+                        id++;
+                        StoringTrue++;
+                    }
+                    else if (Condition.Failure == false)
+                    {
+                        if (StoringTrue >= 5)
+                        {
+                            FailureLang++;
+                            FailureLangMin = FailureLangMin + StoringTrue;
+                            StoringTrue = 0;
+                        }
+                        else if (StoringTrue != 0)
+                        {
+                            FailureKort++;
+                            FailureKortMin = FailureKortMin + StoringTrue;
+                            StoringTrue = 0;
+                        }
+
+                        id++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Bool = false;
+                }
+            }
+
+
+            if (Beschikbaarheid != Beschikbaarheid)
+            {
+                Beschikbaarheid = 0;
+            }
+            if (Prestaties != Prestaties)
+            {
+                Prestaties = 0;
+            }
+            if (Kwaliteit != Kwaliteit)
+            {
+                Kwaliteit = 0;
+            }
+            if (OEE != OEE)
+            {
+                OEE = 0;
+            }
+
+            beschikbaarheid = Beschikbaarheid;
+            prestaties = Prestaties;
+            kwaliteit = Kwaliteit;
+            oEE = OEE;
+            pauze = QueryBreak;
+            failure = FailureTrue;
+            failureCurrent = FailureCurrent;
+            pauzeCurrent = PauzeCurrent;
+            totalGoodProduction = Machinedatas.TotalGoodProduction;
+            production = Machinedatas.TotalProduction - Machinedatas.TotalGoodProduction;
+            failuresKort = FailureKort;
+            failuresLang = FailureLang;
+            failuresKortMin = FailureKortMin;
+            failuresLangMin = FailureLangMin;
+
+            this.Reload();
+        }
+        }
+        }
+        
+
+
