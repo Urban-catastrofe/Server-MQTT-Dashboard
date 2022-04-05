@@ -112,7 +112,7 @@ namespace SimmeMqqt.Services
             {
                 var query = context.MachineDatas
                                    .OrderByDescending(p => p.Id)
-                                   .Where(p => p.Timestamp >= DateTime.UtcNow.AddHours(-1))
+                                   .Where(p => p.Timestamp >= DateTime.Now.AddHours(-1))
                                    .ToList();
 
                 int QueryBreak = query.Where(c => c.Break == true).Count();
@@ -219,7 +219,7 @@ namespace SimmeMqqt.Services
             {
                 var query = context.MachineDatas
                                    .OrderByDescending(p => p.Id)
-                                   .Where(p => p.Timestamp >= DateTime.UtcNow.AddDays(-1))
+                                   .Where(p => p.Timestamp >= DateTime.Now.AddDays(-1))
                                    .ToList();
                 int QueryBreak = query.Where(c => c.Break == true).Count();
                 query.RemoveAll(x => x.Break == true);
@@ -276,7 +276,7 @@ namespace SimmeMqqt.Services
             {
                 var query = context.MachineDatas
                                    .OrderByDescending(p => p.Id)
-                                   .Where(p => p.Timestamp >= DateTime.UtcNow.AddMonths(-1))
+                                   .Where(p => p.Timestamp >= DateTime.Now.AddMonths(-1))
                                    .ToList();
                 int QueryBreak = query.Where(c => c.Break == true).Count();
                 query.RemoveAll(x => x.Break == true);
