@@ -16,13 +16,14 @@
     </RadzenHeading>
          <RadzenMenu>
             <RadzenMenuItem Text="Tijdstip" Icon="alarm">
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddHours(-1)))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-1)))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMinutes(-1)))" Text="minuten" Icon="lock"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMilliseconds(-1)))" Text="millieseconden" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddHours(-1)))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddDays(-1)))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMinutes(-1)))" Text="minuten" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddSeconds(-1)))" Text="seconden" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMilliseconds(-100)))" Text="millieseconden" Icon="lock"></RadzenMenuItem>
             </RadzenMenuItem>
             </RadzenMenu>
                       <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
