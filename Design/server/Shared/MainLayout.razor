@@ -83,9 +83,9 @@
             .Build();
 
         hubConnection.On<float,float,float,float,int,int,int,int>("UurlijkData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,PauzeCurrent,FailureCurrent) =>
-                                                                             {
-                                                                                 Notification(FailureCurrent);
-                                                                             });
+                                                                                           {
+                                                                                               Notification(FailureCurrent);
+                                                                                           });
         await hubConnection.StartAsync();        
     }
 
@@ -102,6 +102,7 @@
                 .FirstOrDefault();
         }
 
+        this.Reload();
     }
 
     private string DataName()

@@ -29,6 +29,10 @@ namespace SimmeMqqt.Layouts
         protected RadzenBody body0;
         protected RadzenSidebar sidebar0;
 
+        public void Reload()
+        {
+            InvokeAsync(StateHasChanged);
+        }
 
         protected async System.Threading.Tasks.Task SidebarToggle0Click(dynamic args)
         {

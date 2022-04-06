@@ -71,6 +71,17 @@
                         <b>Storing: @failuresLang Min: @failuresLangMin</b>
                     </div>
                 </div>
+                           <br />
+                 <div class="row">
+                      <div class="col-md-4">
+                        <div>Totale productie tijd</div>
+                        <b>Min: @totaleProudctieTijd</b>
+                    </div>
+                    <div class="col-md-8">
+                       <div>Huidige productie tijd</div>
+                       <b>Min: @huidigeProductieTijd</b>
+                    </div>
+                </div>
             </RadzenCard>
     <RadzenHeading Size="H3" style="border-radius: -1px; float: none; margin-bottom: 0px; margin-left: 100px; margin-right: 0px; margin-top: 0px; position: static; text-align: center; vertical-align: baseline; width: 152px" Text="Beschikbaarheid                                                 ">
     </RadzenHeading>
@@ -198,6 +209,9 @@
     private int failuresLangMin;
     private int totalGoodProduction;
     private int production;
+    private int huidigeProductieTijd;
+    private int totaleProudctieTijd;
+    DateTime Tijdstip;
 
 
     private HubConnection hubConnection;
@@ -205,11 +219,23 @@
     protected async override Task OnInitializedAsync()
     {
         setdata(DateTime.UtcNow.AddDays(-1));
+
+             hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<float,float,float,float,int,int, MQTTMachineData>("MaandelijksData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,MachineData) =>
+                                    {
+                                        setdata(Tijdstip);
+                                    });
+        await hubConnection.StartAsync();
     }
 
     private void OnCLicked(DateTime tijdstip)
     {
-        setdata(tijdstip);
+        Tijdstip = tijdstip;
+        setdata(Tijdstip);
     }
 
     private void setdata(DateTime Date)
@@ -232,6 +258,7 @@
             var GoodData = query.Where(s => s.Failure == false);
             Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
             int FailureTrue = query.Where(c => c.Failure == true).Count();
+            int TotaleProudctieTijd = query.Where(c => c.Failure == false).Count();
             int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
             float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
@@ -251,6 +278,7 @@
             OEE = OEE * 100;
             var PauzeCurrent = 0;
             var FailureCurrent = 0;
+            var HuidigeProductieTijd = 0;
             var id = 0;
             var Bool = true;
             try
@@ -269,6 +297,25 @@
                         id++;
                     }
                 }
+
+                id = 0;
+                Bool = true;
+
+                while (Bool == true)
+                {
+                    var Condition = query[id];
+
+                    if (Condition.Failure == true)
+                    {
+                        HuidigeProductieTijd = id;
+                        Bool = false;
+                    }
+                    else
+                    {
+                        id++;
+                    }
+                }
+
 
                 id = 0;
                 Bool = true;
@@ -367,6 +414,8 @@
             failuresLang = FailureLang;
             failuresKortMin = FailureKortMin;
             failuresLangMin = FailureLangMin;
+            totaleProudctieTijd = TotaleProudctieTijd;
+            huidigeProductieTijd = HuidigeProductieTijd;
 
             this.Reload();
         }
