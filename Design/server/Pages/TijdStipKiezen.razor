@@ -16,69 +16,69 @@
     </RadzenHeading>
          <RadzenMenu>
             <RadzenMenuItem Text="Tijdstip" Icon="alarm">
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddHours(-1)))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddDays(-1)))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMinutes(-1)))" Text="minuten" Icon="lock"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddSeconds(-1)))" Text="seconden" Icon="lock"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMilliseconds(-100)))" Text="millieseconden" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddHours(-1),"uurlik"))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddDays(-1),"dagelijks"))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddDays(-7),"wekelijks"))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddMonths(-1),"maandelijks"))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddYears(-1),"jaarlijks"))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddMinutes(-1),"minuten"))" Text="minuten" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddSeconds(-1),"seconden"))" Text="seconden" Icon="lock"></RadzenMenuItem>
+                <RadzenMenuItem Click="@(() => OnCLicked(DateTime.Now.AddMilliseconds(-100),"millieseconden"))" Text="millieseconden" Icon="lock"></RadzenMenuItem>
             </RadzenMenuItem>
             </RadzenMenu>
                       <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
                 <h3 class="h5">Extra Informatie</h3>
                                  <div class="row">
                       <div class="col-md-4">
-                        <div>Totale productie</div>
+                        <div>Totale @tijdstipText productie</div>
                         <b>Productie: @totalGoodProduction</b>
                     </div>
                     <div class="col-md-8">
-                        <div>Totale fouten</div>
+                        <div>Totale @tijdstipText fouten</div>
                         <b>Fouten: @production</b>
                     </div>
                 </div>
                 <br />
                  <div class="row">
                     <div class="col-md-4">
-                        <div>Totale minuten pauze</div>
+                        <div>Totale @tijdstipText minuten pauze</div>
                         <b>Min pauze: @pauze</b>
                     </div>
                     <div class="col-md-8">
-                        <div>Totale minuten storing</div>
+                        <div>Totale @tijdstipText minuten storing</div>
                         <b>Min storing: @failure</b>
                     </div>
                  </div>
                  <br />
                  <div class="row">
                       <div class="col-md-4">
-                        <div>Huidige Pauze</div>
+                        <div>Huidige @tijdstipText Pauze</div>
                         <b>Min pauze: @pauzeCurrent</b>
                     </div>
                     <div class="col-md-8">
-                        <div>Huidige Storing</div>
+                        <div>Huidige @tijdstipText Storing</div>
                         <b>Min storing: @failureCurrent</b>
                     </div>
                 </div>
                 <br />
                                  <div class="row">
                       <div class="col-md-4">
-                        <div>Totale storing korten dan 5 minuten</div>
+                        <div>Totale @tijdstipText storing korten dan 5 minuten</div>
                         <b>Storing: @failuresKort Min: @failuresKortMin</b>
                     </div>
                     <div class="col-md-8">
-                        <div>Totale storing langer dan 5 minuten</div>
+                        <div>Totale @tijdstipText storing langer dan 5 minuten</div>
                         <b>Storing: @failuresLang Min: @failuresLangMin</b>
                     </div>
                 </div>
                            <br />
                  <div class="row">
                       <div class="col-md-4">
-                        <div>Totale productie tijd</div>
+                        <div>Totale @tijdstipText productie tijd</div>
                         <b>Min: @totaleProudctieTijd</b>
                     </div>
                     <div class="col-md-8">
-                       <div>Huidige productie tijd</div>
+                       <div>Huidige @tijdstipText productie tijd</div>
                        <b>Min: @huidigeProductieTijd</b>
                     </div>
                 </div>
@@ -195,6 +195,7 @@
 </RadzenContent>
 
 @code {
+    private string tijdstipText;
     private float beschikbaarheid;
     private float prestaties;
     private float kwaliteit;
@@ -219,23 +220,25 @@
     protected async override Task OnInitializedAsync()
     {
         setdata(DateTime.UtcNow.AddDays(-1));
+        tijdstipText = "dagelijk";
 
-             hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
-            .WithAutomaticReconnect()
-            .Build();
+        hubConnection = new HubConnectionBuilder()
+       .WithUrl(NavigationManager.ToAbsoluteUri("/dashboardHub"))
+       .WithAutomaticReconnect()
+       .Build();
 
         hubConnection.On<float,float,float,float,int,int, MQTTMachineData>("MaandelijksData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,MachineData) =>
-                                    {
-                                        setdata(Tijdstip);
-                                    });
+                                         {
+                                             setdata(Tijdstip);
+                                         });
         await hubConnection.StartAsync();
     }
 
-    private void OnCLicked(DateTime tijdstip)
+    private void OnCLicked(DateTime tijdstip, string TijdstipText)
     {
         Tijdstip = tijdstip;
         setdata(Tijdstip);
+        tijdstipText = TijdstipText;
     }
 
     private void setdata(DateTime Date)
