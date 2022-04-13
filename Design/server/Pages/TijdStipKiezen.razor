@@ -228,9 +228,9 @@
        .Build();
 
         hubConnection.On<float,float,float,float,int,int, MQTTMachineData>("MaandelijksData", (Beschikbaarheid, Prestaties,Kwaliteit,OEE,Pauze,Failure,MachineData) =>
-                                         {
-                                             setdata(Tijdstip);
-                                         });
+                                                   {
+                                                       setdata(Tijdstip);
+                                                   });
         await hubConnection.StartAsync();
     }
 
@@ -300,9 +300,14 @@
                         id++;
                     }
                 }
+            }
+            catch (Exception e)
+            { }
+            id = 0;
+            Bool = true;
+            try
+            {
 
-                id = 0;
-                Bool = true;
 
                 while (Bool == true)
                 {
@@ -318,11 +323,15 @@
                         id++;
                     }
                 }
+            }
+            catch (Exception e)
+            { }
 
+            id = 0;
+            Bool = true;
 
-                id = 0;
-                Bool = true;
-
+            try
+            {
                 while (Bool == true)
                 {
                     var Condition = Data[id];
@@ -339,9 +348,7 @@
                 }
             }
             catch (Exception e)
-            {
-
-            }
+            { }
 
             var FailureKort = 0;
             var FailureLang = 0;
@@ -422,8 +429,8 @@
 
             this.Reload();
         }
-        }
-        }
+    }
+}
         
 
 
