@@ -16,11 +16,11 @@
     </RadzenHeading>
          <RadzenMenu>
             <RadzenMenuItem Text="Tijdstip" Icon="alarm">
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddHours(-1)))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-1)))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
-                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.UtcNow.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddHours(-1)))" Text="Uurlijk" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddDays(-1)))" Text="Dagelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddDays(-7)))" Text="Wekelijks" Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddMonths(-1)))" Text="Maandelijks"  Icon="alarm"></RadzenMenuItem>
+                <RadzenMenuItem Click="(Action)(() => OnCLicked(DateTime.Now.AddYears(-1)))" Text="Jaarlijks"  Icon="alarm"></RadzenMenuItem>
             </RadzenMenuItem>
             </RadzenMenu>
                       <RadzenCard class="m-3" style="margin-left: 125px; width: 750px">
@@ -201,7 +201,8 @@
 
     protected async override Task OnInitializedAsync()
     {
-        setdata(DateTime.UtcNow.AddDays(-1));
+        System.Globalization.CultureInfo.CurrentCulture.ClearCachedData();
+        setdata(DateTime.Now.AddDays(-1));
     }
 
     private void OnCLicked(DateTime tijdstip)
@@ -278,7 +279,7 @@
 
                 while (Bool == true)
                 {
-                    var Condition = query[id];
+                    var Condition = Data[id];
 
                     if (Condition.Break == false)
                     {
@@ -373,8 +374,5 @@
 
             this.Reload();
         }
-        }
-        }
-        
-
-
+    }
+}
