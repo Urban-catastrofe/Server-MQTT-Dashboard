@@ -344,9 +344,9 @@ namespace SimmeMqqt.Services
                 var GoodData = query.Where(s => s.Failure == false);
                 Machinedatas.IdealCyclus = GoodData.Sum(p => p.IdealCyclus);
                 int FailureTrue = query.Where(c => c.Failure == true).Count();
-                int FailureFalse = query.Where(c => c.Failure == true || c.Failure == false).Count();
+                int FailureTotal = query.Where(c => c.Failure == true || c.Failure == false).Count();
 
-                float Beschikbaarheid = (float)FailureTrue / (float)FailureFalse;
+                float Beschikbaarheid = (float)FailureTrue / (float)FailureTotal;
                 Beschikbaarheid = 1 - Beschikbaarheid;
                 if (FailureTrue == 0)
                 {
@@ -382,7 +382,7 @@ namespace SimmeMqqt.Services
                             else if (StoringTrue != 0)
                             {
                                 FailureKort++;
-                                FailureKortMin = FailureLangMin + StoringTrue;
+                                FailureKortMin = FailureKortMin + StoringTrue;
                                 StoringTrue = 0;
                             }
 
